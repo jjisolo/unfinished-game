@@ -1,4 +1,4 @@
-#include <EngineInterface.h>
+#include "EngineInterface.h"
 
 static constexpr const uint32_t mixer_init_flags  = MIX_INIT_MP3;
 static constexpr const uint32_t image_init_flags  = IMG_INIT_PNG   | IMG_INIT_JPG;

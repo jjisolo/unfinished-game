@@ -1,6 +1,7 @@
-add_library(dachshund_render_engine
+add_library(dachshund_render_engine STATIC 
+	"RenderingManager.h"	
 	"RenderingManager.cxx"
-	"RenderingManager.h"
+	"RenderingEngine.h"
 )
 
 target_include_directories(dachshund_render_engine
@@ -12,4 +13,3 @@ target_link_libraries(dachshund_render_engine SDL2::SDL2 SDL2::SDL2main)
 target_link_libraries(dachshund_render_engine SDL2_image::SDL2_image)
 target_link_libraries(dachshund_render_engine SDL2_mixer::SDL2_mixer)
 target_link_libraries(dachshund_render_engine SDL2_ttf::SDL2_ttf)
-

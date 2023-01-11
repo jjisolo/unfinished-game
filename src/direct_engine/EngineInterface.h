@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 
+#include <Engine.h>
 #include <StartupManager.h>
 
 // namespace SDL: Holds all SDL2-related classes, interfaces, etc.

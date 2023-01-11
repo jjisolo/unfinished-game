@@ -1,20 +1,19 @@
 # Add nested folders
-add_subdirectory(sdl_engine)
+add_subdirectory(direct_engine)
+add_subdirectory(render_engine)
+add_subdirectory(interface_engine)
 
 # Add source to this project's executable.
 add_executable (dachshund 
 	"EntryPoint.cxx"	 
 )
 
-# Link the nested directories
-link_directories(sdl_engine)
-link_directories(rendering)
-link_directories(ui)
-
 # We use the library for each subfolder
-target_link_libraries(dachshund dachshund_render_engine)
-target_link_libraries(dachshund dachshund_sdl_engine)
-target_link_libraries(dachshund dachshund_ui_engine)
+target_link_libraries(dachshund 
+	dachshund_direct_engine	
+	dachshund_render_engine
+	dachshund_interface_engine
+)
 
 # Add the SDL2 include paths
 target_link_libraries(dachshund SDL2::SDL2 SDL2::SDL2main)
