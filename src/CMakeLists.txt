@@ -20,3 +20,9 @@ target_link_libraries(dachshund SDL2::SDL2 SDL2::SDL2main)
 target_link_libraries(dachshund SDL2_image::SDL2_image)
 target_link_libraries(dachshund SDL2_mixer::SDL2_mixer)
 target_link_libraries(dachshund SDL2_ttf::SDL2_ttf)
+
+# Copy yhe executable to the release folder of the project
+set_target_properties(dachshund PROPERTIES
+                      RUNTIME_OUTPUT_DIRECTORY_DEBUG   ${PROJECT_SOURCE_DIR}/bin/
+                      RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR}/bin/
+)
