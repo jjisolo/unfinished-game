@@ -6,6 +6,16 @@ static constexpr const uint32_t direct_init_flags = SDL_INIT_VIDEO | SDL_INIT_AU
 
 static constexpr const char* default_window_title = "Dachshund adventures!";
 
+SDL_Renderer* SDL::EngineInterface::get_renderer_handle()
+{
+	return m_renderer_handle.get();
+}
+
+SDL::SmartRendererHandle SDL::EngineInterface::get_smart_renderer_handle()
+{
+	return SDL::SmartRendererHandle(m_renderer_handle.get(), SDL_DestroyRenderer);
+}
+
 void SDL::EngineInterface::builtin_on_user_create()
 {
 	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::builtin_on_user_create [%p]", &SDL::EngineInterface::builtin_on_user_create);
@@ -132,8 +142,8 @@ void SDL::EngineInterface::start()
 void SDL::EngineInterface::stop()
 {
 	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::stop [%p]", &SDL::EngineInterface::stop);
-	
 	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Saving the window properties data");
+
 	SDL_GetWindowPosition(
 		m_window_handle.get(),
 		&m_window_startup_details.m_datum.m_last_known_position.first,
@@ -156,6 +166,16 @@ void SDL::EngineInterface::stop()
 	TTF_Quit();
 	IMG_Quit();
 	Mix_Quit();
+}
+
+void SDL::EngineInterface::resize_window(const std::uint32_t width, const std::uint32_t height, const BinaryState16 logic_resize)
+{
+	m_registry.m_current_window_dimensions = std::make_pair(width, height);
+
+	if (!logic_resize)
+	{
+		SDL_SetWindowSize(m_window_handle.get(), width, height);
+	}
 }
 
 bool SDL::EngineInterface::on_user_update()
