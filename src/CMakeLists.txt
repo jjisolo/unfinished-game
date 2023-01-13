@@ -1,6 +1,5 @@
 # Add nested folders
 add_subdirectory(direct_engine)
-add_subdirectory(render_engine)
 add_subdirectory(interface_engine)
 
 # Add source to this project's executable.
@@ -16,6 +15,8 @@ target_link_libraries(dachshund
 )
 
 # Add the SDL2 include paths
+target_link_libraries(dachshund SDL2::Engine)
+target_link_libraries(dachshund SDL2::RenderEngine)
 target_link_libraries(dachshund SDL2::SDL2 SDL2::SDL2main)
 target_link_libraries(dachshund SDL2_image::SDL2_image)
 target_link_libraries(dachshund SDL2_mixer::SDL2_mixer)
