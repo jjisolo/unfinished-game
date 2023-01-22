@@ -14,14 +14,16 @@
 #include <Engine.h>
 #include <EngineRegistry.h>
 #include <StartupManager.h>
-#include <DirectTextureFactory.h>
 
 // namespace SDL: Holds all SDL2-related classes, interfaces, etc.
 namespace SDL
 {
-	using SmartWindowHandle   = std::unique_ptr<SDL_Window,   decltype(&SDL_DestroyWindow)>;
-	using SmartRendererHandle = std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)>;
-	using SmartTextureHandle  = std::unique_ptr<SDL_Texture,  decltype(&SDL_DestroyTexture)>;
+	using SmartWindowHandle    = std::unique_ptr<SDL_Window,   decltype(&SDL_DestroyWindow)>;
+	using SmartRendererHandle  = std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)>;
+	using SmartTextureHandle   = std::unique_ptr<SDL_Texture,  decltype(&SDL_DestroyTexture)>;
+
+	using DirectWindowPosition   = std::pair<int, int>;
+	using DirectWindowDimensions = std::pair<int, int>;
 
 	using BinaryState32 = uint32_t;
 	using BinaryState16 = uint16_t;
@@ -34,8 +36,8 @@ namespace SDL
 		static constexpr const int   default_renderer_flags   = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 		static constexpr const int   default_rendering_device = -1;
 
-		static constexpr std::pair<int, int>default_window_position   = {SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED};
-		static constexpr std::pair<int, int>default_window_dimensions = {640, 480};
+		static constexpr DirectWindowPosition   default_window_position   = {SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED};
+		static constexpr DirectWindowDimensions default_window_dimensions = {640, 480};
 	}
 
 	class EngineInterface
@@ -61,12 +63,17 @@ namespace SDL
 		/*!
 		* \brief Get the raw SDL2 renderer pointer
 		*/
-		SmartRendererHandle get_smart_renderer_handle();
+		SDL_Renderer* get_renderer_handle();
 
 		/*!
-		* \brief Get the raw SDL2 renderer pointer
+		* \brief Get the position of the application root window
 		*/
-		SDL_Renderer* get_renderer_handle();
+		DirectWindowPosition&& get_window_position();
+
+		/*!
+		* \brief Get the dimensions of the application root window
+		*/
+		DirectWindowDimensions&& get_window_dimensions();
 
 		/*!
 		* \brief Start the engine.

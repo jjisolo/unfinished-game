@@ -1,5 +1,6 @@
 # Add the nested directories
 add_subdirectory(render_engine)
+add_subdirectory(interface_engine)
 
 # Create the library
 add_library(dachshund_direct_engine STATIC

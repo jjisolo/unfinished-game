@@ -11,9 +11,18 @@ SDL_Renderer* SDL::EngineInterface::get_renderer_handle()
 	return m_renderer_handle.get();
 }
 
-SDL::SmartRendererHandle SDL::EngineInterface::get_smart_renderer_handle()
+SDL::DirectWindowPosition&& SDL::EngineInterface::get_window_position()
 {
-	return SDL::SmartRendererHandle(m_renderer_handle.get(), SDL_DestroyRenderer);
+	SDL::DirectWindowPosition window_position;
+	SDL_GetWindowPosition(m_window_handle.get(), &window_position.first, &window_position.second);
+	return std::move(window_position);
+}
+
+SDL::DirectWindowPosition&& SDL::EngineInterface::get_window_dimensions()
+{
+	SDL::DirectWindowPosition window_dimensions;
+	SDL_GetWindowSize(m_window_handle.get(), &window_dimensions.first, &window_dimensions.second);
+	return std::move(window_dimensions);
 }
 
 void SDL::EngineInterface::builtin_on_user_create()
@@ -76,6 +85,11 @@ void SDL::EngineInterface::builtin_on_user_create()
 			SDL::priv::default_rendering_device,
 			SDL::priv::default_renderer_flags
 		));
+
+		m_registry.m_current_window_dimensions = std::make_pair(
+			SDL::priv::default_window_position.first,
+			SDL::priv::default_window_position.second
+		);
 	}
 	else
 	{
@@ -95,6 +109,11 @@ void SDL::EngineInterface::builtin_on_user_create()
 			m_window_startup_details.m_datum.m_last_known_rendering_device,
 			m_window_startup_details.m_datum.m_last_known_renderer_flags
 		));
+
+		m_registry.m_current_window_dimensions = std::make_pair(
+			m_window_startup_details.m_datum.m_last_known_dimensions.first, 
+			m_window_startup_details.m_datum.m_last_known_dimensions.second
+		);
 	}
 
 	if (m_window_handle.get()   == NULL)
@@ -121,8 +140,9 @@ void SDL::EngineInterface::builtin_on_user_update()
 		{
 			case SDL_QUIT:
 			{
-				SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "The application recieved QUIT signal, proceeding to the program exit");
+				SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t --- The application recieved QUIT signal, proceeding to the program exit");
 				m_application_should_close = true;
+				break;
 			}
 		}
 	}
@@ -170,6 +190,14 @@ void SDL::EngineInterface::stop()
 
 void SDL::EngineInterface::resize_window(const std::uint32_t width, const std::uint32_t height, const BinaryState16 logic_resize)
 {
+	SDL_LogDebug(
+		SDL_LOG_CATEGORY_APPLICATION,
+		"\t--- Window resized from (%d, %d) to (%d, %d)",
+		m_registry.m_current_window_dimensions.first,
+		m_registry.m_current_window_dimensions.second,
+		width, height
+	);
+
 	m_registry.m_current_window_dimensions = std::make_pair(width, height);
 
 	if (!logic_resize)

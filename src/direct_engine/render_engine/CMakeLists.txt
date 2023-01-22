@@ -3,8 +3,12 @@ add_library(dachshund_render_engine STATIC
 	"RenderingManager.h"	
 	"RenderingManager.cxx"
 	"RenderingEngine.h"
-	"DirectTextureFactory.h" 
-	"DirectTextureFactory.cxx"
+	"DirectTexture.cxx" 
+	"RenderSceneFactory.cxx"
+	"DirectTexture.h"
+	"RenderScene.h" 
+	"RenderScene.cxx"
+	"RenderObject.h"
 )
 
 # Create alias for the library for better looking
