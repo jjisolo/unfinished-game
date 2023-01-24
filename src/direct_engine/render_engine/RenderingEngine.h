@@ -3,6 +3,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+#include <RenderingExceptions.h>
+
 #include <unordered_map>
 #include <type_traits>
 #include <algorithm>
