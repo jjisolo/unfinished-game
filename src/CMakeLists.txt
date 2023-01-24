@@ -14,9 +14,10 @@ target_link_libraries(dachshund
 )
 
 # Add the SDL2 include paths
+target_link_libraries(dachshund mingw32)
 target_link_libraries(dachshund SDL2::Engine)
 target_link_libraries(dachshund SDL2::RenderEngine)
-target_link_libraries(dachshund SDL2::SDL2 SDL2::SDL2main)
+target_link_libraries(dachshund SDL2::SDL2main SDL2::SDL2)
 target_link_libraries(dachshund SDL2_image::SDL2_image)
 target_link_libraries(dachshund SDL2_mixer::SDL2_mixer)
 target_link_libraries(dachshund SDL2_ttf::SDL2_ttf)
