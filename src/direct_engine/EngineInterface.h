@@ -47,7 +47,7 @@ namespace SDL
 			m_window_handle  (std::move(engine_interface.m_window_handle)),
 			m_renderer_handle(std::move(engine_interface.m_renderer_handle))
 		{
-			builtin_on_user_create();
+            builtin_on_user_create();
 			on_user_create();
 		}
 	
@@ -68,12 +68,12 @@ namespace SDL
 		/*!
 		* \brief Get the position of the application root window
 		*/
-		DirectWindowPosition&& get_window_position();
+		DirectWindowPosition get_window_position();
 
 		/*!
 		* \brief Get the dimensions of the application root window
 		*/
-		DirectWindowDimensions&& get_window_dimensions();
+		DirectWindowDimensions get_window_dimensions();
 
 		/*!
 		* \brief Start the engine.

@@ -11,23 +11,26 @@ SDL_Renderer* SDL::EngineInterface::get_renderer_handle()
 	return m_renderer_handle.get();
 }
 
-SDL::DirectWindowPosition&& SDL::EngineInterface::get_window_position()
+SDL::DirectWindowPosition SDL::EngineInterface::get_window_position()
 {
 	SDL::DirectWindowPosition window_position;
 	SDL_GetWindowPosition(m_window_handle.get(), &window_position.first, &window_position.second);
-	return std::move(window_position);
+	return window_position;
 }
 
-SDL::DirectWindowPosition&& SDL::EngineInterface::get_window_dimensions()
+SDL::DirectWindowPosition SDL::EngineInterface::get_window_dimensions()
 {
 	SDL::DirectWindowPosition window_dimensions;
 	SDL_GetWindowSize(m_window_handle.get(), &window_dimensions.first, &window_dimensions.second);
-	return std::move(window_dimensions);
+	return window_dimensions;
 }
 
 void SDL::EngineInterface::builtin_on_user_create()
 {
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::builtin_on_user_create [%p]", &SDL::EngineInterface::builtin_on_user_create);
+    SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_DEBUG);
+    SDL_LogSetPriority(SDL_LOG_CATEGORY_SYSTEM,		 SDL_LOG_PRIORITY_ERROR);
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::builtin_on_user_create [%p]", &SDL::EngineInterface::builtin_on_user_create);
 	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Initializing SDL2 subsystems.");
 
 	if (SDL_Init(direct_init_flags) != 0)
