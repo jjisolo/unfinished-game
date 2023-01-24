@@ -30,7 +30,6 @@ namespace SDL
 	struct DirectTextureWrapper
 	{
 		SDL_Texture*      texture;
-		DirectTextureKind kind;
 	};
 
 	struct RenderObject
