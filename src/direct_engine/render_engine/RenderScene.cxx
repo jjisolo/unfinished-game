@@ -5,7 +5,7 @@ std::ptrdiff_t SDL::RenderScene::get_render_group_by_id(const SDL::RenderGroupID
 	// Find the required ID in the global id->user_id table
 	auto vector_iterator = VectorFind(m_render_group_id_to_internal_id, render_group);
 
-	// If we found something calculate the from the start of the vector
+	// If we found something calculate from the start of the vector
 	// to the element(read: find its index) and return it
 	if (vector_iterator != m_render_group_id_to_internal_id.end())
 		return std::distance(m_render_group_id_to_internal_id.begin(), vector_iterator);
