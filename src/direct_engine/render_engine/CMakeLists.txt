@@ -5,11 +5,14 @@ add_library(dachshund_render_engine STATIC
 	"RenderingEngine.h"
 	"DirectTextureFactory.h"
 	"RenderSceneFactory.cxx"
-	"DirectTextireContainer.h"
-	"RenderScene.h" 
+	"DirectTextureContainer.h"
+	"DirectTextureContainer.cxx"
+	"RenderScene.h"
 	"RenderScene.cxx"
 	"RenderObject.h"
-        RenderingExceptions.h DirectTextureFactory.cxx DirectTextureContainer.cxx DirectTextureContainer.h)
+	"RenderingExceptions.h"
+	"DirectTextureFactory.cxx"
+)
 
 # Create alias for the library for better looking
 add_library(SDL2::RenderEngine ALIAS dachshund_render_engine)
@@ -21,10 +24,12 @@ target_include_directories(dachshund_render_engine
 )
 
 # Link the library against the other libraries
-target_link_libraries(dachshund_render_engine
-		SDL2::SDL2 
-		SDL2::SDL2main
-		SDL2_ttf::SDL2_ttf
-		SDL2_image::SDL2_image
-		SDL2_mixer::SDL2_mixer
-)
+if(UNIX)
+	target_include_directories(dachshund_render_engine PUBLIC include ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
+	target_link_libraries(dachshund_render_engine      PUBLIC ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
+else()
+	target_link_libraries(dachshund_render_engine SDL2::SDL2main SDL2::SDL2)
+	target_link_libraries(dachshund_render_engine SDL2_image::SDL2_image)
+	target_link_libraries(dachshund_render_engine SDL2_mixer::SDL2_mixer)
+	target_link_libraries(dachshund_render_engine SDL2_ttf::SDL2_ttf)
+endif(UNIX)
