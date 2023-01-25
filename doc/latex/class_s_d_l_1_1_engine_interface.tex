@@ -1,0 +1,94 @@
+\hypertarget{class_s_d_l_1_1_engine_interface}{}\doxysection{SDL\+::Engine\+Interface Class Reference}
+\label{class_s_d_l_1_1_engine_interface}\index{SDL::EngineInterface@{SDL::EngineInterface}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_s_d_l_1_1_engine_interface_a1b67e7ddc91e3483c7b59e7bf299c8b8}\label{class_s_d_l_1_1_engine_interface_a1b67e7ddc91e3483c7b59e7bf299c8b8}} 
+{\bfseries Engine\+Interface} (\mbox{\hyperlink{class_s_d_l_1_1_engine_interface}{Engine\+Interface}} \&\&engine\+\_\+interface) noexcept
+\item 
+void \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_a10e46bfd09519ef818c4f5945ecae3dc}{start}} ()
+\begin{DoxyCompactList}\small\item\em Start the engine. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_ae01cf342fcc6098c0bbf8c5101739e5d}{stop}} ()
+\begin{DoxyCompactList}\small\item\em Start the engine. \end{DoxyCompactList}\item 
+virtual bool \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_a08cf7778acd270ed633ca4e3ab6ee4bd}{on\+\_\+user\+\_\+create}} ()
+\begin{DoxyCompactList}\small\item\em The function that is called on the creation of the application. \end{DoxyCompactList}\item 
+virtual bool \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_a9fcddc84f9d1aa1128d9a1d9df808788}{on\+\_\+user\+\_\+update}} ()
+\begin{DoxyCompactList}\small\item\em The function that is called on each update. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_afcf7c68fa00908cf0b938129aa20e229}{resize\+\_\+window}} (std\+::uint32\+\_\+t width, std\+::uint32\+\_\+t height, Binary\+State16 logic\+\_\+resize)
+\begin{DoxyCompactList}\small\item\em Resize the logic window. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_s_d_l_1_1_engine_interface_a08cf7778acd270ed633ca4e3ab6ee4bd}\label{class_s_d_l_1_1_engine_interface_a08cf7778acd270ed633ca4e3ab6ee4bd}} 
+\index{SDL::EngineInterface@{SDL::EngineInterface}!on\_user\_create@{on\_user\_create}}
+\index{on\_user\_create@{on\_user\_create}!SDL::EngineInterface@{SDL::EngineInterface}}
+\doxysubsubsection{\texorpdfstring{on\_user\_create()}{on\_user\_create()}}
+{\footnotesize\ttfamily bool SDL\+::\+Engine\+Interface\+::on\+\_\+user\+\_\+create (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+The function that is called on the creation of the application. 
+
+Should be inherited and ovverided by the end-\/user of the engine \mbox{\Hypertarget{class_s_d_l_1_1_engine_interface_a9fcddc84f9d1aa1128d9a1d9df808788}\label{class_s_d_l_1_1_engine_interface_a9fcddc84f9d1aa1128d9a1d9df808788}} 
+\index{SDL::EngineInterface@{SDL::EngineInterface}!on\_user\_update@{on\_user\_update}}
+\index{on\_user\_update@{on\_user\_update}!SDL::EngineInterface@{SDL::EngineInterface}}
+\doxysubsubsection{\texorpdfstring{on\_user\_update()}{on\_user\_update()}}
+{\footnotesize\ttfamily bool SDL\+::\+Engine\+Interface\+::on\+\_\+user\+\_\+update (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+The function that is called on each update. 
+
+Should be inherited and ovverided by the end-\/user of the engine \mbox{\Hypertarget{class_s_d_l_1_1_engine_interface_afcf7c68fa00908cf0b938129aa20e229}\label{class_s_d_l_1_1_engine_interface_afcf7c68fa00908cf0b938129aa20e229}} 
+\index{SDL::EngineInterface@{SDL::EngineInterface}!resize\_window@{resize\_window}}
+\index{resize\_window@{resize\_window}!SDL::EngineInterface@{SDL::EngineInterface}}
+\doxysubsubsection{\texorpdfstring{resize\_window()}{resize\_window()}}
+{\footnotesize\ttfamily void SDL\+::\+Engine\+Interface\+::resize\+\_\+window (\begin{DoxyParamCaption}\item[{std\+::uint32\+\_\+t}]{width,  }\item[{std\+::uint32\+\_\+t}]{height,  }\item[{Binary\+State16}]{logic\+\_\+resize }\end{DoxyParamCaption})}
+
+
+
+Resize the logic window. 
+
+There is two types of resizing the window\+: logic resize and the acutal resize. The logic resize means updating the window size in the engine registry,the actual resize does the logic resize and the actual resize of the window in the user space
+
+
+\begin{DoxyParams}{Parameters}
+{\em width} & new width of the window \\
+\hline
+{\em height} & new height of the window \\
+\hline
+{\em logic\+\_\+resize} & apply the logic resize \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_s_d_l_1_1_engine_interface_a10e46bfd09519ef818c4f5945ecae3dc}\label{class_s_d_l_1_1_engine_interface_a10e46bfd09519ef818c4f5945ecae3dc}} 
+\index{SDL::EngineInterface@{SDL::EngineInterface}!start@{start}}
+\index{start@{start}!SDL::EngineInterface@{SDL::EngineInterface}}
+\doxysubsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily void SDL\+::\+Engine\+Interface\+::start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Start the engine. 
+
+\begin{DoxySeeAlso}{See also}
+builtin\+\_\+on\+\_\+user\+\_\+create(), \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_a08cf7778acd270ed633ca4e3ab6ee4bd}{on\+\_\+user\+\_\+create()}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{class_s_d_l_1_1_engine_interface_ae01cf342fcc6098c0bbf8c5101739e5d}\label{class_s_d_l_1_1_engine_interface_ae01cf342fcc6098c0bbf8c5101739e5d}} 
+\index{SDL::EngineInterface@{SDL::EngineInterface}!stop@{stop}}
+\index{stop@{stop}!SDL::EngineInterface@{SDL::EngineInterface}}
+\doxysubsubsection{\texorpdfstring{stop()}{stop()}}
+{\footnotesize\ttfamily void SDL\+::\+Engine\+Interface\+::stop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Start the engine. 
+
+\begin{DoxySeeAlso}{See also}
+builtin\+\_\+on\+\_\+user\+\_\+quit(), on\+\_\+user\+\_\+quit() 
+\end{DoxySeeAlso}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+W\+:/dachshund\+\_\+release/dachshund/src/direct\+\_\+engine/Engine\+Interface.\+h\item 
+W\+:/dachshund\+\_\+release/dachshund/src/direct\+\_\+engine/Engine\+Interface.\+cxx\end{DoxyCompactItemize}

@@ -1,0 +1,92 @@
+\hypertarget{_engine_interface_8h_source}{}\doxysection{Engine\+Interface.\+h}
+\label{_engine_interface_8h_source}\index{W:/dachshund\_release/dachshund/src/direct\_engine/EngineInterface.h@{W:/dachshund\_release/dachshund/src/direct\_engine/EngineInterface.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ InterfaceWindow.h:\ Base\ window\ class\ that\ is\ needed\ to\ be\ inherited}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ by\ a\ user.}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <SDL.h>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <SDL\_ttf.h>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <SDL\_image.h>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <SDL\_mixer.h>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <Engine.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <EngineRegistry.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <StartupManager.h>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ namespace\ SDL:\ Holds\ all\ SDL2-\/related\ classes,\ interfaces,\ etc.}}
+\DoxyCodeLine{00019\ \textcolor{keyword}{namespace\ }SDL}
+\DoxyCodeLine{00020\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{namespace\ }priv}
+\DoxyCodeLine{00022\ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ default\_window\_title\ \ \ \ \ =\ \textcolor{stringliteral}{"{}Dachshund\ adventures!"{}};}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \ \ default\_window\_flags\ \ \ \ \ =\ SDL\_WINDOW\_SHOWN;}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \ \ default\_renderer\_flags\ \ \ =\ SDL\_RENDERER\_ACCELERATED\ |\ SDL\_RENDERER\_PRESENTVSYNC;}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \ \ default\_rendering\_device\ =\ -\/1;}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ std::pair<int,\ int>default\_window\_position\ \ \ =\ \{SDL\_WINDOWPOS\_UNDEFINED,\ SDL\_WINDOWPOS\_UNDEFINED\};}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ std::pair<int,\ int>default\_window\_dimensions\ =\ \{640,\ 480\};}
+\DoxyCodeLine{00030\ \ \ \ \ \}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_s_d_l_1_1_engine_interface}{EngineInterface}}}
+\DoxyCodeLine{00033\ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }SmartWindowHandle\ \ \ =\ std::unique\_ptr<SDL\_Window,\ \ \ \textcolor{keyword}{decltype}(\&SDL\_DestroyWindow)>;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }SmartRendererHandle\ =\ std::unique\_ptr<SDL\_Renderer,\ \textcolor{keyword}{decltype}(\&SDL\_DestroyRenderer)>;}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }SmartTextureHandle\ \ =\ std::unique\_ptr<SDL\_Texture,\ \ \textcolor{keyword}{decltype}(\&SDL\_DestroyTexture)>;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }BinaryState16\ \ \ \ \ \ \ =\ uint16\_t;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{public}:\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_s_d_l_1_1_engine_interface}{EngineInterface}}(\mbox{\hyperlink{class_s_d_l_1_1_engine_interface}{EngineInterface}}\&\&\ engine\_interface)\ \textcolor{keyword}{noexcept}:}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ m\_window\_handle\ \ (std::move(engine\_interface.m\_window\_handle)),}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ m\_renderer\_handle(std::move(engine\_interface.m\_renderer\_handle))}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ builtin\_on\_user\_create();}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_a08cf7778acd270ed633ca4e3ab6ee4bd}{on\_user\_create}}();}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00048\ \ \ \ \ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_s_d_l_1_1_engine_interface}{EngineInterface}}()\ :}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ m\_window\_handle\ \ (\textcolor{keyword}{nullptr},\ SDL\_DestroyWindow),\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ m\_renderer\_handle(\textcolor{keyword}{nullptr},\ SDL\_DestroyRenderer)\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ builtin\_on\_user\_create();}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_a08cf7778acd270ed633ca4e3ab6ee4bd}{on\_user\_create}}();}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ builtin\_on\_user\_create();}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ builtin\_on\_user\_update();}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{comment}{//void\ builtin\_mousemove\_callback();}}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{comment}{//void\ builtin\_windowresize\_callback();}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_a10e46bfd09519ef818c4f5945ecae3dc}{start}}();}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_ae01cf342fcc6098c0bbf8c5101739e5d}{stop}}();}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_a08cf7778acd270ed633ca4e3ab6ee4bd}{on\_user\_create}}();}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_a9fcddc84f9d1aa1128d9a1d9df808788}{on\_user\_update}}();}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_s_d_l_1_1_engine_interface_afcf7c68fa00908cf0b938129aa20e229}{resize\_window}}(std::uint32\_t\ width,\ std::uint32\_t\ height,\ BinaryState16\ logic\_resize);}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{comment}{//virtual\ void\ on\_mouse\_move();}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ SmartWindowHandle\ \ \ m\_window\_handle;}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ SmartRendererHandle\ m\_renderer\_handle;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ BinaryState16\ \ \ \ \ \ \ m\_application\_should\_close;}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_s_d_l_1_1priv_1_1_engine_registry}{priv::EngineRegistry}}\ \ \ \ \ \ \ m\_registry;}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_s_d_l_1_1priv_1_1_window_startup_details}{priv::WindowStartupDetails}}\ m\_window\_startup\_details;}
+\DoxyCodeLine{00130\ \ \ \ \ \};}
+\DoxyCodeLine{00131\ \}}
+
+\end{DoxyCode}

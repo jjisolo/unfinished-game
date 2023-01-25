@@ -100,12 +100,10 @@ void SDL::RenderScene::enable_render_group(const SDL::RenderGroupID render_group
 			{
 				case SDL::RenderObjectType::DirectTexture:
 				{
-					if (render_object.kind != SDL::RenderObjectKind::Enabled)
-					{
-						auto render_object_backend = std::get<SDL_Texture*>(render_object.backend);
+                    auto render_object_backend = std::get<SDL::SharedDirectTexture>(render_object.backend);
 
-						
-					}
+
+
 					break;
 				}
 			}

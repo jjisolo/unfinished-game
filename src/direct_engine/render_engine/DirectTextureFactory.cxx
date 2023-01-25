@@ -1,6 +1,6 @@
 #include <DirectTextureFactory.h>
 
-SDL::SmartTextureHandle SDL::DirectTextureFactory::create_texture_from_image(SDL_Renderer* renderer_handle, const std::string& image_path)
+SDL_Texture* SDL::DirectTextureFactory::create_texture_from_image(SDL_Renderer* renderer_handle, const std::string& image_path)
 {
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::DirectTextureFactory::load_image [%p]", &SDL::DirectTextureFactory::create_texture_from_image);
 
@@ -43,5 +43,5 @@ SDL::SmartTextureHandle SDL::DirectTextureFactory::create_texture_from_image(SDL
         image_texture = load_direct_image(renderer_handle, m_texture_airbag.c_str());
     }
 
-    return SDL::SmartTextureHandle{image_texture, SDL_DestroyTexture};
+    return image_texture;
 }
