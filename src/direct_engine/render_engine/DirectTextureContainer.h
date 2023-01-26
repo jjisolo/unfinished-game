@@ -12,7 +12,6 @@ namespace SDL
 {
     using SharedDirectTexture  = std::shared_ptr<SDL_Texture>;
     using SharedTexturePath    = std::string;
-    using SharedTextureName    = std::string;
     using SharedTextureRect    = SDL_Rect;
 
     enum class SharedTextureLoadVariant : std::uint8_t
@@ -41,16 +40,13 @@ namespace SDL
          * \sa  SDL::DirectRendererHandle
          */
         DirectTextureContainer(
-                SDL::DirectTextureFactory& factory,
-                SDL::SharedTexturePath     image_path,
-                SDL::SharedTextureRect     image_source,
-                SDL::SharedTextureRect     image_destination)
+                SDL::SharedTexturePath                      image_path,
+                SDL::SharedTextureRect                      image_source,
+                SDL::SharedTextureRect                      image_destination)
                 :
-                SDL::priv::DirectObjectContainerPreset{SDL::DirectObjectState::Disabled},
-                m_binded_texture_factory              {factory                         },
-                m_shared_texture_path                 {std::move(image_path)           },
-                m_texture_source                      {image_source                    },
-                m_texture_destination                 {image_destination               }
+                SDL::priv::DirectObjectContainerPreset{std::move(image_path), SDL::DirectObjectState::Disabled},
+                m_texture_source                      {image_source         },
+                m_texture_destination                 {image_destination    }
         {
             // Using this constructor is already defines the texture load type as an SharedTextureLoadVariant::LoadImageByPath,
             // so we don't need explicitly pass the state to the constructor
@@ -65,7 +61,7 @@ namespace SDL
         /*!
          * \brief Load the texture
          */
-        [[maybe_unused]] void enable(SDL::DirectRendererHandle renderer_handle) final;
+        [[maybe_unused]] void enable(SDL::DirectRendererHandle renderer_handle, std::shared_ptr<SDL::DirectTextureFactory> direct_factory) final;
 
         /*!
          * \brief Unload the texture
@@ -73,13 +69,9 @@ namespace SDL
         [[maybe_unused]] void disable() final;
 
     private:
-        SDL::DirectTextureFactory&    m_binded_texture_factory;
-
         SDL::SharedDirectTexture      m_shared_texture;
         SDL::SharedTextureLoadVariant m_shared_texture_load_variant;
-        SDL::SharedTexturePath        m_shared_texture_path;
 
-        SDL::SharedTextureName m_shared_texture_name;
         SDL::SharedTextureRect m_texture_source;
         SDL::SharedTextureRect m_texture_destination;
     };
