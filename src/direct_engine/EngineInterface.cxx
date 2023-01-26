@@ -30,7 +30,7 @@ void SDL::EngineInterface::builtin_on_user_create()
     SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_DEBUG);
     SDL_LogSetPriority(SDL_LOG_CATEGORY_SYSTEM,		 SDL_LOG_PRIORITY_ERROR);
 
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::builtin_on_user_create [%p]", &SDL::EngineInterface::builtin_on_user_create);
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::builtin_on_user_create [%p]", this);
 	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Initializing SDL2 subsystems.");
 
 	if (SDL_Init(direct_init_flags) != 0)
@@ -143,7 +143,7 @@ void SDL::EngineInterface::builtin_on_user_update()
 		{
 			case SDL_QUIT:
 			{
-				SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t --- The application recieved QUIT signal, proceeding to the program exit");
+				SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- The application recieved QUIT signal, proceeding to the program exit");
 				m_application_should_close = true;
 				break;
 			}
@@ -153,7 +153,7 @@ void SDL::EngineInterface::builtin_on_user_update()
 
 void SDL::EngineInterface::start()
 {
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::start [%p]", &SDL::EngineInterface::start);
+	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::start [%p]", this);
 
 	while (m_application_should_close != true)
 	{
@@ -164,7 +164,7 @@ void SDL::EngineInterface::start()
 
 void SDL::EngineInterface::stop()
 {
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::stop [%p]", &SDL::EngineInterface::stop);
+	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::stop [%p]", this);
 	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Saving the window properties data");
 
 	SDL_GetWindowPosition(
