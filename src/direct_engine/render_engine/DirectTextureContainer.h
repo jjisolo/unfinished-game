@@ -6,6 +6,8 @@
 
 #include <utility>
 
+// TODO: the factory is should be binded not on each texture but on each render_scene(for now we storing absolute nonsense state in each texture)
+// TODO: more SharedTextureLoadVariant - copy, load_from_image, load_from_surface, convert_from_font, convert_from_ui_object(?) ...
 namespace SDL
 {
     using SharedDirectTexture  = std::shared_ptr<SDL_Texture>;
@@ -58,18 +60,17 @@ namespace SDL
         /*!
          * \brief Render the texture on the screen
          */
-        [[maybe_unused]] virtual void render(SDL::DirectRendererHandle renderer_handle) const final;
+        [[maybe_unused]] void render(SDL::DirectRendererHandle renderer_handle) const final;
 
         /*!
          * \brief Load the texture
          */
-        [[maybe_unused]] virtual void enable(SDL::DirectRendererHandle renderer_handle) final;
+        [[maybe_unused]] void enable(SDL::DirectRendererHandle renderer_handle) final;
 
         /*!
          * \brief Unload the texture
          */
-        [[maybe_unused]] virtual void disable() final;
-
+        [[maybe_unused]] void disable() final;
 
     private:
         SDL::DirectTextureFactory&    m_binded_texture_factory;
