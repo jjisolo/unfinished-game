@@ -2,9 +2,14 @@
 
 #include <RenderingEngine.h>
 
+#include <utility>
+
 namespace SDL
 {
+    class DirectTextureFactory;
+
     using DirectRendererHandle = SDL_Renderer*;
+    using DirectObjectName     = std::string;
 
     enum class DirectObjectState : std::uint8_t
     {
@@ -18,10 +23,13 @@ namespace SDL::priv
     class DirectObjectContainerPreset
     {
     public:
-        [[maybe_unused]] explicit DirectObjectContainerPreset(SDL::DirectObjectState direct_object_state):
-            m_direct_object_state(direct_object_state)
+        [[maybe_unused]] DirectObjectContainerPreset(
+                SDL::DirectObjectName  direct_object_name,
+                SDL::DirectObjectState direct_object_state)
+                :
+                m_direct_object_state(direct_object_state),
+                m_direct_object_name(std::move(direct_object_name))
         {
-
         }
 
         /*!
@@ -32,7 +40,7 @@ namespace SDL::priv
         /*!
          * \brief Enable the object
          */
-        [[maybe_unused]] virtual void enable(SDL::DirectRendererHandle direct_renderer_handle) = 0;
+        [[maybe_unused]] virtual void enable(SDL::DirectRendererHandle direct_renderer_handle, std::shared_ptr<SDL::DirectTextureFactory> direct_factory) = 0;
 
         /*!
         * \brief Disable the object
@@ -47,8 +55,17 @@ namespace SDL::priv
             return m_direct_object_state;
         }
 
+        /*!
+        * \brief Get the object name
+        */
+        [[maybe_unused]] [[nodiscard]] inline SDL::DirectObjectName get_name() const
+        {
+            return m_direct_object_name;
+        }
+
     protected:
         SDL::DirectObjectState m_direct_object_state;
+        SDL::DirectObjectName  m_direct_object_name;
     };
 
 }
