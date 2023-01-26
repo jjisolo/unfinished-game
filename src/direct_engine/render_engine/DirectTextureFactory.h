@@ -3,6 +3,8 @@
 #include <RenderingEngine.h>
 #include <RenderingExceptions.h>
 
+#include <utility>
+
 namespace SDL
 {
 	class DirectTextureFactory
@@ -15,8 +17,8 @@ namespace SDL
          * \param texture_airbag The texture that is loaded when some other texture
          * load fails.
         */
-        DirectTextureFactory(const std::string& texture_airbag = "undefined.png") :
-            m_texture_airbag(texture_airbag)
+        explicit DirectTextureFactory(std::string texture_airbag = "undefined.png") :
+            m_texture_airbag(std::move(texture_airbag))
         {
 
         }
