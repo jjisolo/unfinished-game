@@ -1,14 +1,13 @@
 #pragma once
 
+#include <DirectObjectContainerPreset.h>
 #include <DirectTextureFactory.h>
-#include <RenderScene.h>
+#include <RenderingEngine.h>
 
 #include <utility>
 
 namespace SDL
 {
-    using DirectRendererHandle = SDL_Renderer*;
-
     using SharedDirectTexture  = std::shared_ptr<SDL_Texture>;
     using SharedTexturePath    = std::string;
     using SharedTextureName    = std::string;
@@ -20,16 +19,10 @@ namespace SDL
         LoadImageByPath
     };
 
-    enum class SharedTextureState : std::uint8_t
+    class DirectTextureContainer: public SDL::priv::DirectObjectContainerPreset
     {
-        Enabled,
-        Disabled
-    };
-
-    class DirectTextureContainer
-    {
-        friend class SDL::DirectTextureFactory;
-        friend class SDL::RenderScene;
+        friend class DirectTextureFactory;
+        friend class RenderScene;
     public:
 
         /*!
@@ -43,58 +36,50 @@ namespace SDL
          *
          * \sa  SDL::EngineInterface::get_renderer_handle()
          * \sa  SDL::DirectTextureFactory
+         * \sa  SDL::DirectRendererHandle
          */
         DirectTextureContainer(
-                SDL::DirectRendererHandle& renderer,
                 SDL::DirectTextureFactory& factory,
-                SDL::SharedTexturePath image_path,
-                SDL::SharedTextureRect image_source,
-                SDL::SharedTextureRect image_destination)
+                SDL::SharedTexturePath     image_path,
+                SDL::SharedTextureRect     image_source,
+                SDL::SharedTextureRect     image_destination)
                 :
-                m_binded_renderer_handle(renderer),
-                m_binded_texture_factory(factory),
-                m_shared_texture_path   (std::move(image_path)),
-                m_texture_source        (image_source),
-                m_texture_destination   (image_destination)
-            {
-                m_shared_texture_load_variant = SharedTextureLoadVariant::LoadImageByPath;
-                m_shared_texture_state        = SharedTextureState::Disabled;
-            }
+                SDL::priv::DirectObjectContainerPreset{SDL::DirectObjectState::Disabled},
+                m_binded_texture_factory              {factory                         },
+                m_shared_texture_path                 {std::move(image_path)           },
+                m_texture_source                      {image_source                    },
+                m_texture_destination                 {image_destination               }
+        {
+            // Using this constructor is already defines the texture load type as an SharedTextureLoadVariant::LoadImageByPath,
+            // so we don't need explicitly pass the state to the constructor
+            m_shared_texture_load_variant = SharedTextureLoadVariant::LoadImageByPath;
+        }
+
+        /*!
+         * \brief Render the texture on the screen
+         */
+        [[maybe_unused]] virtual void render(SDL::DirectRendererHandle renderer_handle) const final;
 
         /*!
          * \brief Load the texture
          */
-        void enable();
+        [[maybe_unused]] virtual void enable(SDL::DirectRendererHandle renderer_handle) final;
 
         /*!
          * \brief Unload the texture
          */
-        void disable();
-
-        /*!
-             * \brief Get the texture state(is it loaded or its not)
-         */
-        inline SDL::SharedTextureState get_state() const noexcept
-        {
-            return m_shared_texture_state;
-        }
-
+        [[maybe_unused]] virtual void disable() final;
 
 
     private:
         SDL::DirectTextureFactory&    m_binded_texture_factory;
-        SDL::DirectRendererHandle&    m_binded_renderer_handle;
-
-        SDL::SharedTextureName        m_shared_texture_name;
 
         SDL::SharedDirectTexture      m_shared_texture;
-        SDL::SharedTextureState       m_shared_texture_state;
         SDL::SharedTextureLoadVariant m_shared_texture_load_variant;
         SDL::SharedTexturePath        m_shared_texture_path;
 
+        SDL::SharedTextureName m_shared_texture_name;
         SDL::SharedTextureRect m_texture_source;
         SDL::SharedTextureRect m_texture_destination;
     };
-
 }
-
