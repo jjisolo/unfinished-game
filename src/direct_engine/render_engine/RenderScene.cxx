@@ -56,7 +56,7 @@ void SDL::RenderScene::push_to_render_group(const SDL::RenderGroupID render_grou
 	m_render_groups.at(render_group_index).push_back(std::move(render_object));
 }
 
-void SDL::RenderScene::alias_render_group(const SDL::RenderGroupID render_group_id, SDL::RenderGroupName aliased_name)
+void SDL::RenderScene::alias_render_group(const SDL::RenderGroupID render_group_id, const SDL::RenderGroupName& aliased_name)
 {
 	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::RenderScene::alias_render_group [%p]", this);
 

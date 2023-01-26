@@ -63,7 +63,7 @@ namespace SDL
 		* \param render_group_id id of the render group to be aliased
 		* \param aliased_name name to be aliased  
 		*/
-		void alias_render_group(SDL::RenderGroupID render_group_id, RenderGroupName aliased_name);
+		void alias_render_group(SDL::RenderGroupID render_group_id, const RenderGroupName& aliased_name);
 
 		/*!
 		* \brief Push render object to the render group using aliased name
