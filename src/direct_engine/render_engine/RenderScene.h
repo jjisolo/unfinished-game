@@ -1,11 +1,21 @@
 #pragma once
 
 #include <RenderingEngine.h>
-#include <RenderObject.h>
+#include <DirectTextureContainer.h>
 
 namespace SDL
 {
-	using RenderGroupIndicies  = std::vector<std::uint8_t>;
+    namespace priv
+    {
+        // RenderObject variant index(std::variant::index) to the data structure
+        // name, absolutely reduntant just the code sugar
+        static constexpr const std::uint8_t RenderObjectVariantIndex_DirectTextureContainer = 0u;
+        // ...
+    }
+
+    using RenderObject         = std::variant<SDL::DirectTextureContainer, SDL_Texture*>;
+
+    using RenderGroupIndicies  = std::vector<std::uint8_t>;
 	using RenderGroup          = std::vector<SDL::RenderObject>;
 	using RenderGroupContainer = std::vector<SDL::RenderGroup>;
 	using RenderGroupName      = std::string;

@@ -60,7 +60,7 @@ void SDL::RenderScene::push_to_render_group(const SDL::RenderGroupID render_grou
 
 void SDL::RenderScene::alias_render_group(const SDL::RenderGroupID render_group_id, SDL::RenderGroupName aliased_name)
 {
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::RenderScene::alias_render_group [%p]", &SDL::RenderScene::alias_render_group);
+	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::RenderScene::alias_render_group [%p]", this);
 
 	// If the render group with the same name is already exists
 	if (m_render_group_names.contains(aliased_name))
@@ -92,22 +92,29 @@ void SDL::RenderScene::enable_render_group(const SDL::RenderGroupID render_group
 {
 	auto render_group_valid_index = get_render_group_by_id(render_group_id);
 
+    // Iterate through each render object at the render group, which id is provided by
+    // the user
 	for (auto& render_object : m_render_groups.at(render_group_valid_index))
 	{
-		if (render_object.kind != SDL::RenderObjectKind::Enabled)
-		{
-			switch (render_object.type)
-			{
-				case SDL::RenderObjectType::DirectTexture:
-				{
-                    auto render_object_backend = std::get<SDL::SharedDirectTexture>(render_object.backend);
+        // As soon as each render object backend contained in the union render_object
+        // is a standartized object with enable/disable/render function inside of it
+        // we are free to just check if the container is empty, and otherwise just call
+        // the enable function
+        if(render_object.index() != std::variant_npos)
+        {
+            switch(render_object.index())
+            {
+                // The variant holds the SDL::DirectTextureContainer class
+                case SDL::priv::RenderObjectVariantIndex_DirectTextureContainer:
+                {
+                    auto render_object_backend = std::get<SDL::DirectTextureContainer>(render_object);
+                    render_object_backend.render(m_binded_texture_factory);
+                    break;
+                }
+            }
 
+        }
 
-
-					break;
-				}
-			}
-		}
 	}
 }
 
