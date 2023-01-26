@@ -4,6 +4,14 @@
 
 namespace SDL
 {
+    struct [[maybe_unused]] DirectInvalidArgument : public std::exception
+    {
+        [[nodiscard]] const char* what () const throw ()
+        {
+            return "DirectInvalidArgument";
+        }
+    };
+
     struct [[maybe_unused]] DirectSystemException : public std::exception
     {
         [[nodiscard]] const char* what () const throw ()
