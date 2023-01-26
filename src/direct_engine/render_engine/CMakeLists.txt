@@ -9,10 +9,9 @@ add_library(dachshund_render_engine STATIC
 	"DirectTextureContainer.cxx"
 	"RenderScene.h"
 	"RenderScene.cxx"
-	"RenderObject.h"
-	"RenderingExceptions.h"
+        "RenderingExceptions.h"
 	"DirectTextureFactory.cxx"
-)
+		DirectObjectContainerPreset.cxx DirectObjectContainerPreset.h)
 
 # Create alias for the library for better looking
 add_library(SDL2::RenderEngine ALIAS dachshund_render_engine)

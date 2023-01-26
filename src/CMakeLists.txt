@@ -21,6 +21,10 @@ endif(WIN32)
 target_link_libraries(dachshund SDL2::Engine)
 target_link_libraries(dachshund SDL2::RenderEngine)
 
+set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -fno-pie")
+set (CMAKE_C_FLAGS_RELWITHDEBINFO   "${CMAKE_C_FLAGS_RELWITHDEBINFO} -fno-pie")
+
+
 if(UNIX)
 	target_include_directories(dachshund PUBLIC include ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
 	target_link_libraries(dachshund ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES} ${SDL2MIXER_LIBRARIES})
