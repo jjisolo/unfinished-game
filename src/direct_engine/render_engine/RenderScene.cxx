@@ -46,13 +46,11 @@ void SDL::RenderScene::push_to_render_group(const SDL::RenderGroupID render_grou
 		// As soon as the specified ID is not in the table, the new
 		// render group should be created
 		m_render_group_id_to_internal_id.push_back(render_group);
-		m_render_groups                 .push_back(SDL::RenderGroup());
+		m_render_groups                 .emplace_back();
 
 		render_group_index = m_render_group_id_to_internal_id.size() - 1;
 		SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- The new render group container has been created");
 	}
-
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Object %s is added to the render group with ID of %d", render_object.title.c_str(), render_group);
 
 	// Move the element to the render group
 	m_render_groups.at(render_group_index).push_back(std::move(render_object));
@@ -88,7 +86,7 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
 }
 
 
-void SDL::RenderScene::enable_render_group(const SDL::RenderGroupID render_group_id)
+[[maybe_unused]] void SDL::RenderScene::enable_render_group(const SDL::RenderGroupID render_group_id)
 {
 	auto render_group_valid_index = get_render_group_by_id(render_group_id);
 
@@ -97,7 +95,52 @@ void SDL::RenderScene::enable_render_group(const SDL::RenderGroupID render_group
 	for (auto& render_object : m_render_groups.at(render_group_valid_index))
 	{
         // As soon as each render object backend contained in the union render_object
-        // is a standartized object with enable/disable/render function inside of it
+        // is a standardized object with enable/disable/render function inside of it
+        // we are free to just check if the container is empty, and otherwise just call
+        // the enable function
+        if(render_object.index() != std::variant_npos)
+        {
+            switch(render_object.index())
+            {
+                // The variant holds the SDL::DirectTextureContainer class
+                case SDL::priv::RenderObjectVariantIndex_DirectTextureContainer:
+                {
+                    auto& render_object_backend = std::get<SDL::DirectTextureContainer>(render_object);
+                    render_object_backend.enable(m_binded_renderer_handle, m_binded_texture_factory);
+                    break;
+                }
+            }
+
+        }
+
+	}
+}
+
+[[maybe_unused]] void SDL::RenderScene::enable_render_group(const SDL::RenderGroupName& render_group)
+{
+    // Check if this name exists in the name container, if it
+    // does not create it and asign to the current id.
+    if (!m_render_group_names.contains(render_group))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- The name %s is not aliased within any known render group", render_group.c_str());
+        throw SDL::DirectInvalidArgument();
+    }
+
+    // Otherwise string->id is exists, so we just pull it from
+    // the map
+    enable_render_group(m_render_group_names[render_group]);
+}
+
+[[maybe_unused]] void SDL::RenderScene::disable_render_group(const SDL::RenderGroupID render_group)
+{
+    auto render_group_valid_index = get_render_group_by_id(render_group);
+
+    // Iterate through each render object at the render group, which id is provided by
+    // the user
+    for (auto& render_object : m_render_groups.at(render_group_valid_index))
+    {
+        // As soon as each render object backend contained in the union render_object
+        // is a standardized object with enable/disable/render function inside of it
         // we are free to just check if the container is empty, and otherwise just call
         // the enable function
         if(render_object.index() != std::variant_npos)
@@ -108,17 +151,25 @@ void SDL::RenderScene::enable_render_group(const SDL::RenderGroupID render_group
                 case SDL::priv::RenderObjectVariantIndex_DirectTextureContainer:
                 {
                     auto render_object_backend = std::get<SDL::DirectTextureContainer>(render_object);
-                    render_object_backend.render(m_binded_texture_factory);
+                    render_object_backend.disable();
                     break;
                 }
             }
-
         }
-
-	}
+    }
 }
 
-void SDL::RenderScene::disable_render_group(const SDL::RenderGroupID render_group_id)
+[[maybe_unused]] void SDL::RenderScene::disable_render_group(const SDL::RenderGroupName& render_group)
 {
+    // Check if this name exists in the name container, if it
+    // does not create it and assign to the current id.
+    if (!m_render_group_names.contains(render_group))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- The name %s is not aliased within any known render group", render_group.c_str());
+        throw SDL::DirectInvalidArgument();
+    }
 
+    // Otherwise string->id is exists, so we just pull it from
+    // the map
+    disable_render_group(m_render_group_names[render_group]);
 }
