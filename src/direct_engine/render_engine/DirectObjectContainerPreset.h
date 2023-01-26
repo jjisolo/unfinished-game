@@ -27,17 +27,17 @@ namespace SDL::priv
         /*!
         * \brief Render the object on the screen
         */
-        [[maybe_unused]] virtual void render(SDL::DirectRendererHandle direct_renderer_handle)=0;
+        [[maybe_unused]] virtual void render(SDL::DirectRendererHandle direct_renderer_handle) const = 0;
 
         /*!
          * \brief Enable the object
          */
-        [[maybe_unused]] virtual void enable(SDL::DirectRendererHandle direct_renderer_handle)=0;
+        [[maybe_unused]] virtual void enable(SDL::DirectRendererHandle direct_renderer_handle) = 0;
 
         /*!
         * \brief Disable the object
          */
-        [[maybe_unused]] virtual void disable()=0;
+        [[maybe_unused]] virtual void disable() = 0;
 
         /*!
         * \brief Get the object state
