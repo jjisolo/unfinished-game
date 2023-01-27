@@ -4,7 +4,7 @@ SDL_Texture* SDL::DirectTextureFactory::create_texture_from_image(SDL_Renderer* 
 {
     SDL_Texture* image_texture;
 
-    auto load_direct_image = [this](SDL_Renderer* renderer_handle, const char* texture_path)
+    auto load_direct_image = [](SDL_Renderer* renderer_handle, const char* texture_path)
     {
         SDL_Surface* image_surface;
         SDL_Texture* image_texture;
@@ -12,7 +12,7 @@ SDL_Texture* SDL::DirectTextureFactory::create_texture_from_image(SDL_Renderer* 
         image_surface = IMG_Load(texture_path);
         if(image_surface == NULL)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- Image %s loading failed", texture_path);
+            SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- Image %s loading failed",            texture_path);
             SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- The following error message is: %s", IMG_GetError());
             throw SDL::DirectSystemException();
         }
@@ -21,7 +21,7 @@ SDL_Texture* SDL::DirectTextureFactory::create_texture_from_image(SDL_Renderer* 
         if(image_texture == NULL)
         {
             SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- Image %s convertation to texture failed", texture_path);
-            SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- The following error message is: %s", IMG_GetError());
+            SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- The following error message is: %s",      IMG_GetError());
             throw SDL::DirectSystemException();
         }
 
