@@ -11,7 +11,7 @@ SDL_Renderer* SDL::EngineInterface::get_renderer_handle()
 	return m_renderer_handle.get();
 }
 
-SDL::DirectWindowPosition SDL::EngineInterface::get_window_position()
+[[maybe_unused]] SDL::DirectWindowPosition SDL::EngineInterface::get_window_position()
 {
 	SDL::DirectWindowPosition window_position;
 	SDL_GetWindowPosition(m_window_handle.get(), &window_position.first, &window_position.second);
@@ -191,7 +191,7 @@ void SDL::EngineInterface::stop()
 	Mix_Quit();
 }
 
-void SDL::EngineInterface::resize_window(const std::uint32_t width, const std::uint32_t height, const BinaryState16 logic_resize)
+[[maybe_unused]] void SDL::EngineInterface::resize_window(const std::uint32_t width, const std::uint32_t height, const BinaryState16 logic_resize)
 {
 	SDL_LogDebug(
 		SDL_LOG_CATEGORY_APPLICATION,
