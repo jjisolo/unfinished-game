@@ -6,7 +6,6 @@
 
 #include <utility>
 
-// TODO: the factory is should be binded not on each texture but on each render_scene(for now we storing absolute nonsense state in each texture)
 // TODO: more SharedTextureLoadVariant - copy, load_from_image, load_from_surface, convert_from_font, convert_from_ui_object(?) ...
 namespace SDL
 {
@@ -29,15 +28,10 @@ namespace SDL
         /*!
          * \brief Image texture constructor
          *
-         * \param renderer   A handle(pointer) to the SDL_Renderer instance
-         * \param factory    A reference to an existing SDL::DirectTextureFactory instance
          * \param image_path Path to an image(recursive)
          * \param image_source Source rectangle of an image
          * \param image_destination Destination rectangle of an image
          *
-         * \sa  SDL::EngineInterface::get_renderer_handle()
-         * \sa  SDL::DirectTextureFactory
-         * \sa  SDL::DirectRendererHandle
          */
         DirectTextureContainer(
                 SDL::SharedTexturePath                      image_path,

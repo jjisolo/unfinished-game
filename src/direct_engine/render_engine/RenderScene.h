@@ -24,7 +24,20 @@ namespace SDL
 	using RenderGroupNameContainer  = std::unordered_map<std::string, SDL::RenderGroupID>;
 
     /*!
+     * Render scene is a container for a different render groups(which are build
+     * from the groups of render objects).
      *
+     * Render group management is handled using render group ID's and names
+     * (which can be aliased to some ID).
+     *
+     * The common practise is to split the render scene in different render groups
+     * and then enable or disable some of them. For example let's take an abstract
+     * render scene named `main menu`, it would be built from render group called
+     * `menu_main`, `submenu_settings` etc. Of course on the start of the menu scene
+     * we dont need to render the `submenu_settings` group.
+     *
+     * That is why the render scene is so usefully when it comes to the actual development
+     * of a dynamic render scene.
      */
     class RenderScene
     {
