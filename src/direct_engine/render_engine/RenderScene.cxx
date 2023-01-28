@@ -15,7 +15,7 @@ std::ptrdiff_t SDL::RenderScene::get_render_group_by_id(const SDL::RenderGroupID
 }
 
 
-void SDL::RenderScene::push_to_render_group(const SDL::RenderGroupName& render_group, SDL::RenderObject render_object)
+[[maybe_unused]] void SDL::RenderScene::push_to_render_group(const SDL::RenderGroupName& render_group, SDL::RenderObject render_object)
 {
 	// Check if this name exists in the name container, if it
 	// does not create it and asign to the current id.
@@ -106,13 +106,12 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
                 case SDL::priv::RenderObjectVariantIndex_DirectTextureContainer:
                 {
                     auto& render_object_backend = std::get<SDL::DirectTextureContainer>(render_object);
-                    render_object_backend.enable(m_binded_renderer_handle, m_binded_texture_factory);
+                    render_object_backend  .enable(m_binded_renderer_handle, m_binded_texture_factory);
+                    m_enabled_render_groups.push_back(static_cast<int>(render_group_id));
                     break;
                 }
             }
-
         }
-
 	}
 }
 
@@ -131,9 +130,9 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
     enable_render_group(m_render_group_names[render_group]);
 }
 
-[[maybe_unused]] void SDL::RenderScene::disable_render_group(const SDL::RenderGroupID render_group)
+[[maybe_unused]] void SDL::RenderScene::disable_render_group(const SDL::RenderGroupID render_group_id)
 {
-    auto render_group_valid_index = get_render_group_by_id(render_group);
+    auto render_group_valid_index = get_render_group_by_id(render_group_id);
 
     // Iterate through each render object at the render group, which id is provided by
     // the user
@@ -151,7 +150,8 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
                 case SDL::priv::RenderObjectVariantIndex_DirectTextureContainer:
                 {
                     auto render_object_backend = std::get<SDL::DirectTextureContainer>(render_object);
-                    render_object_backend.disable();
+                    render_object_backend  .disable();
+                    m_enabled_render_groups.remove(static_cast<int>(render_group_id));
                     break;
                 }
             }

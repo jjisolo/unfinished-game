@@ -19,6 +19,7 @@ namespace SDL
 	using RenderGroupContainer = std::vector<SDL::RenderGroup>;
 	using RenderGroupName      = std::string;
 	using RenderGroupID        = int;
+    using RenderGroupIDList    = std::list<SDL::RenderGroupID>;
 
 	using RenderGroupIDContainer    = std::vector       <SDL::RenderGroupID>;
 	using RenderGroupNameContainer  = std::unordered_map<std::string, SDL::RenderGroupID>;
@@ -41,6 +42,7 @@ namespace SDL
      */
     class RenderScene
     {
+        friend class RenderingManager;
     public:
         /*!
         * \brief Construct RenderScene class
@@ -76,7 +78,7 @@ namespace SDL
 		* \param render_group_id id of the render group to be aliased
 		* \param aliased_name name to be aliased  
 		*/
-		void alias_render_group(SDL::RenderGroupID render_group_id, const RenderGroupName& aliased_name);
+        [[maybe_unused]] void alias_render_group(SDL::RenderGroupID render_group_id, const RenderGroupName& aliased_name);
 
 		/*!
 		* \brief Push render object to the render group using aliased name
@@ -84,7 +86,7 @@ namespace SDL
 		* \param render_group aliased name of the render group
 		* \param render_object render object that is moved to the render group
 		*/
-		void push_to_render_group(const SDL::RenderGroupName& render_group, SDL::RenderObject render_object);
+        [[maybe_unused]] void push_to_render_group(const SDL::RenderGroupName& render_group, SDL::RenderObject render_object);
 
 		/*!
 		* \brief Push render object to the render group using render group ID
@@ -138,6 +140,18 @@ namespace SDL
         */
         [[maybe_unused]] void disable_render_group(const SDL::RenderGroupName& render_group);
 
+
+        /*!
+         * \brief Get all enabled render groups
+         *
+         * \sa RenderGroupIDList
+         */
+        [[maybe_unused]] inline SDL::RenderGroupIDList get_enabled_render_groups() const
+        {
+            return m_enabled_render_groups;
+        }
+
+
 	private:
 		std::ptrdiff_t get_render_group_by_id(RenderGroupID render_group);
 
@@ -146,7 +160,7 @@ namespace SDL
 
         SDL::DirectRendererHandle      m_binded_renderer_handle;
 		SDL::RenderGroupContainer      m_render_groups;
-        SDL::RenderGroupIDContainer    m_active_render_groups;
+        SDL::RenderGroupIDList         m_enabled_render_groups;
         SDL::RenderGroupIDContainer    m_render_group_id_to_internal_id;
         SDL::RenderGroupNameContainer  m_render_group_names;
 	};
