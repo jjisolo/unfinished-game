@@ -13,6 +13,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <list>
 
 #define VectorFind(vector, item)         (std::find((vector).begin(), (vector).end(), (item)))
 #define VectorFindBinary(vector, item)   ((VectorFind((vector), (item)) != (vector).end()))
