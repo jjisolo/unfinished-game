@@ -10,10 +10,12 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <utility>
 
 #include <Engine.h>
 #include <EngineRegistry.h>
 #include <StartupManager.h>
+#include <RenderingManager.h>
 
 /*!
  * This is a global namespace for all public objects
@@ -54,9 +56,10 @@ namespace SDL
             on_user_create();
         }
 
-        EngineInterface() :
-            m_window_handle  (nullptr, SDL_DestroyWindow),
-            m_renderer_handle(nullptr, SDL_DestroyRenderer)
+        explicit EngineInterface(std::shared_ptr<SDL::RenderingManager> render_manager) :
+            m_binded_render_manager (std::move(render_manager)),
+            m_window_handle         (nullptr, SDL_DestroyWindow),
+            m_renderer_handle       (nullptr, SDL_DestroyRenderer)
         {
             builtin_on_user_create();
             on_user_create();
@@ -149,9 +152,10 @@ namespace SDL
         private:
             SDL::SmartWindowHandle   m_window_handle;
             SDL::SmartRendererHandle m_renderer_handle;
-            SDL::BinaryState16		 m_application_should_close;
+            SDL::BinaryState16		 m_application_should_close{};
 
-            SDL::priv::EngineRegistry       m_registry;
-            SDL::priv::WindowStartupDetails m_window_startup_details;
-        };
+            SDL::priv::EngineRegistry         m_registry;
+            SDL::priv::WindowStartupDetails   m_window_startup_details;
+            std::shared_ptr<RenderingManager> m_binded_render_manager;
+    };
 }
