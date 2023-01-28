@@ -157,6 +157,7 @@ void SDL::EngineInterface::start()
 
 	while (m_application_should_close != true)
 	{
+        m_binded_render_manager->render();
 		builtin_on_user_update();
 		on_user_update();
 	}
@@ -164,31 +165,40 @@ void SDL::EngineInterface::start()
 
 void SDL::EngineInterface::stop()
 {
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::stop [%p]", this);
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Saving the window properties data");
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::stop [%p]", this);
 
-	SDL_GetWindowPosition(
-		m_window_handle.get(),
-		&m_window_startup_details.m_datum.m_last_known_position.first,
-		&m_window_startup_details.m_datum.m_last_known_position.second
-	);
+    if(SDL_WasInit(SDL_INIT_VIDEO))
+    {
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Saving the window properties data");
 
-	SDL_GetWindowSize(
-		m_window_handle.get(),
-		&m_window_startup_details.m_datum.m_last_known_dimensions.first,
-		&m_window_startup_details.m_datum.m_last_known_dimensions.second
-	);
+        SDL_GetWindowPosition(
+                m_window_handle.get(),
+                &m_window_startup_details.m_datum.m_last_known_position.first,
+                &m_window_startup_details.m_datum.m_last_known_position.second
+        );
 
-	m_window_startup_details.m_datum.m_last_known_rendering_device = SDL::priv::default_rendering_device;
-	m_window_startup_details.m_datum.m_last_known_renderer_flags   = SDL::priv::default_renderer_flags;
-	m_window_startup_details.m_datum.m_last_known_window_flags     = SDL::priv::default_window_flags;
-	m_window_startup_details.save();
+        SDL_GetWindowSize(
+                m_window_handle.get(),
+                &m_window_startup_details.m_datum.m_last_known_dimensions.first,
+                &m_window_startup_details.m_datum.m_last_known_dimensions.second
+        );
 
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Deinitializing the SDL2 subsystems");
-	SDL_Quit();
-	TTF_Quit();
-	IMG_Quit();
-	Mix_Quit();
+        m_window_startup_details.m_datum.m_last_known_rendering_device = SDL::priv::default_rendering_device;
+        m_window_startup_details.m_datum.m_last_known_renderer_flags   = SDL::priv::default_renderer_flags;
+        m_window_startup_details.m_datum.m_last_known_window_flags     = SDL::priv::default_window_flags;
+        m_window_startup_details.save();
+
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Deinitializing the SDL2 subsystems");
+        SDL_Quit();
+        TTF_Quit();
+        IMG_Quit();
+        Mix_Quit();
+    }
+    else
+    {
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to stop unitialized engine");
+        throw SDL::DirectSystemException();
+    }
 }
 
 [[maybe_unused]] void SDL::EngineInterface::resize_window(const std::uint32_t width, const std::uint32_t height, const BinaryState16 logic_resize)
