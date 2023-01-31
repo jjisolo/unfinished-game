@@ -11,6 +11,10 @@ namespace SDL
         // name, absolutely redundant just the code sugar
         static constexpr const std::uint8_t RenderObjectVariantIndex_DirectTextureContainer = 0u;
         // ...
+
+        template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+        // explicit deduction guide (not needed as of C++20)
+        template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
     }
 
     struct DirectFontContainer
@@ -124,7 +128,7 @@ namespace SDL
         *
 		* \param render_group ID of the render group
 		*/
-        [[maybe_unused]] void disable_render_group(SDL::RenderGroupID render_group);
+        [[maybe_unused]] void disable_render_group(SDL::RenderGroupID render_group_id);
 
         /*!
         * \brief Disable render group

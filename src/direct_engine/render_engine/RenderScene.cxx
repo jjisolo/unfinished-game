@@ -88,29 +88,28 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
 
 [[maybe_unused]] void SDL::RenderScene::enable_render_group(const SDL::RenderGroupID render_group_id)
 {
-	auto render_group_valid_index = get_render_group_by_id(render_group_id);
+    auto render_group_valid_index = get_render_group_by_id(render_group_id);
 
     // Iterate through each render object at the render group, which id is provided by
     // the user
-	for (auto& render_object : m_render_groups.at(render_group_valid_index))
-	{
-        // As soon as each render object backend contained in the union render_object
-        // is a standardized object with enable/disable/render function inside of it
-        // we are free to just check if the container is empty, and otherwise just call
-        // the enable function
-        if(render_object.index() != std::variant_npos)
+    for (auto& render_object : m_render_groups.at(render_group_valid_index))
+    {
+        try
         {
-            switch(render_object.index())
-            {
-                // The variant holds the SDL::DirectTextureContainer class
-                case SDL::priv::RenderObjectVariantIndex_DirectTextureContainer:
-                {
-                    auto& render_object_backend = std::get<SDL::DirectTextureContainer>(render_object);
-                    render_object_backend  .enable(m_binded_renderer_handle, m_binded_texture_factory);
+            std::visit([this, &render_group_id](auto&& render_object_backend) {
+                using RenderObjectType = std::decay_t<decltype(render_object_backend)>;
+                // Iterate through each variant type, and do the job for each type.
+                if constexpr(std::is_same_v<RenderObjectType, SDL::DirectTextureContainer>) {
                     m_enabled_render_groups.push_back(static_cast<int>(render_group_id));
-                    break;
+                    render_object_backend  .enable(m_binded_renderer_handle, m_binded_texture_factory);
                 }
-            }
+            }, render_object);
+        }
+        catch(const std::bad_variant_access& exception)
+        {
+            // The render_object is somehow valueless_by_exception, we are
+            // just logging the error and then to the rest of the job
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "The render_object is valueless_by_exception!");
         }
 	}
 }
@@ -138,23 +137,22 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
     // the user
     for (auto& render_object : m_render_groups.at(render_group_valid_index))
     {
-        // As soon as each render object backend contained in the union render_object
-        // is a standardized object with enable/disable/render function inside of it
-        // we are free to just check if the container is empty, and otherwise just call
-        // the enable function
-        if(render_object.index() != std::variant_npos)
+        try
         {
-            switch(render_object.index())
-            {
-                // The variant holds the SDL::DirectTextureContainer class
-                case SDL::priv::RenderObjectVariantIndex_DirectTextureContainer:
-                {
-                    auto render_object_backend = std::get<SDL::DirectTextureContainer>(render_object);
-                    render_object_backend  .disable();
+            std::visit([this, &render_group_id](auto&& render_object_backend) {
+                using RenderObjectType = std::decay_t<decltype(render_object_backend)>;
+                // Iterate through each variant type, and do the job for each type.
+                if constexpr(std::is_same_v<RenderObjectType, SDL::DirectTextureContainer>) {
                     m_enabled_render_groups.remove(static_cast<int>(render_group_id));
-                    break;
+                    render_object_backend  .disable();
                 }
-            }
+            }, render_object);
+        }
+        catch(const std::bad_variant_access& exception)
+        {
+            // The render_object is somehow valueless_by_exception, we are
+            // just logging the error and then to the rest of the job
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "The render_object is valueless_by_exception!");
         }
     }
 }
