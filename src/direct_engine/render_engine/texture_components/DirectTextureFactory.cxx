@@ -1,6 +1,6 @@
-#include <DirectTextureFactory.h>
+#include "DirectTextureFactory.h"
 
-SDL_Texture* SDL::DirectTextureFactory::create_texture_from_image(SDL_Renderer* renderer_handle, const std::string& image_path)
+SDL_Texture* SDL::DirectTextureFactory::load_texture(SDL_Renderer* renderer_handle, const std::string& image_path)
 {
     SDL_Texture* image_texture;
 
@@ -41,4 +41,12 @@ SDL_Texture* SDL::DirectTextureFactory::create_texture_from_image(SDL_Renderer* 
     }
 
     return image_texture;
+}
+
+SDL_Texture *SDL::DirectTextureFactory::load_font(SDL::DirectRendererHandle     renderer_handle,
+                                                                  const std::string            &font_path,
+                                                                  SDL::DirectFontDisplayVariant font_variant,
+                                                                  SDL::DirectFontDisplaySize    font_size)
+{
+    return nullptr;
 }

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <DirectObjectContainerPreset.h>
-#include <DirectTextureFactory.h>
-#include <RenderingEngine.h>
+#include "DirectTextureFactory.h"
+#include "RenderingEngine.h"
 
 #include <utility>
 
@@ -13,10 +13,11 @@ namespace SDL
     using SharedTexturePath    = std::string;
     using SharedTextureRect    = SDL_Rect;
 
-    enum class SharedTextureLoadVariant : std::uint8_t
+    enum class DirectTextureContainerLoadVariant : std::uint8_t
     {
         Copy,
-        LoadImageByPath
+        LoadImage,
+        LoadFont,
     };
 
     class DirectTextureContainer: public SDL::priv::DirectObjectContainerPreset
@@ -26,25 +27,24 @@ namespace SDL
     public:
 
         /*!
-         * \brief Image texture constructor
+         * \brief TrueType font texture constructor
          *
-         * \param image_path Path to an image(recursive)
-         * \param image_source Source rectangle of an image
-         * \param image_destination Destination rectangle of an image
+         * \param font_path Path to the font(recursive)
+         * \param font_source Source rectangle of the font
+         * \param font_destination Destination rectangle of the font
          *
          */
         DirectTextureContainer(
-                SDL::SharedTexturePath                      image_path,
-                SDL::SharedTextureRect                      image_source,
-                SDL::SharedTextureRect                      image_destination)
+                DirectTextureContainerLoadVariant           texture_load_variant,
+                SDL::SharedTexturePath                      texture_path,
+                SDL::SharedTextureRect                      texture_source,
+                SDL::SharedTextureRect                      texture_destination)
                 :
-                SDL::priv::DirectObjectContainerPreset{std::move(image_path), SDL::DirectObjectState::Disabled},
-                m_texture_source                      {image_source         },
-                m_texture_destination                 {image_destination    }
+                SDL::priv::DirectObjectContainerPreset{std::move(texture_path), SDL::DirectObjectState::Disabled},
+                m_shared_texture_load_variant         {texture_load_variant   },
+                m_texture_source                      {texture_source         },
+                m_texture_destination                 {texture_destination    }
         {
-            // Using this constructor is already defines the texture load type as an SharedTextureLoadVariant::LoadImageByPath,
-            // so we don't need explicitly pass the state to the constructor
-            m_shared_texture_load_variant = SharedTextureLoadVariant::LoadImageByPath;
         }
 
         /*!
@@ -63,8 +63,8 @@ namespace SDL
         [[maybe_unused]] void disable() final;
 
     private:
-        SDL::SharedDirectTexture      m_shared_texture;
-        SDL::SharedTextureLoadVariant m_shared_texture_load_variant;
+        SDL::SharedDirectTexture               m_shared_texture;
+        SDL::DirectTextureContainerLoadVariant m_shared_texture_load_variant;
 
         SDL::SharedTextureRect m_texture_source;
         SDL::SharedTextureRect m_texture_destination;

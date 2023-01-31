@@ -3,7 +3,7 @@
 
 bool SDL::priv::WindowStartupDetails::save()
 {
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\tEntering SDL::WindowStartupDetails::save [%p]", &SDL::priv::WindowStartupDetails::load);
+	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\tEntering SDL::WindowStartupDetails::save [%p]", this);
 
 	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t\t--- Opening %s file for writing", SDL::priv::launch_details_filename);
 	SDL_RWops* startup_details = SDL_RWFromFile(SDL::priv::launch_details_filename, "w");
@@ -35,7 +35,7 @@ bool SDL::priv::WindowStartupDetails::save()
 
 bool SDL::priv::WindowStartupDetails::load()
 {
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\tEntering SDL::WindowStartupDetails::load [%p]", &SDL::priv::WindowStartupDetails::save);
+	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\tEntering SDL::WindowStartupDetails::load [%p]", this);
 
 	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t\t--- Opening %s file for reading", SDL::priv::launch_details_filename);
 	SDL_RWops* startup_details = SDL_RWFromFile(SDL::priv::launch_details_filename, "r");

@@ -13,6 +13,13 @@ namespace SDL
         // ...
     }
 
+    struct DirectFontContainer
+    {
+        SDL::DirectFontRelativePath   path;
+        SDL::DirectFontDisplaySize    size;
+        SDL::DirectFontDisplayVariant variant;
+    };
+
     using RenderObject         = std::variant<SDL::DirectTextureContainer, SDL_Texture*>;
 
 	using RenderGroup          = std::vector<SDL::RenderObject>;
@@ -23,6 +30,9 @@ namespace SDL
 
 	using RenderGroupIDContainer    = std::vector       <SDL::RenderGroupID>;
 	using RenderGroupNameContainer  = std::unordered_map<std::string, SDL::RenderGroupID>;
+
+    using RenderSceneFontContainer  = std::unordered_map<std::string, struct SDL::DirectFontContainer>;
+
 
     /*!
      * Render scene is a container for a different render groups(which are build
@@ -151,8 +161,34 @@ namespace SDL
             return m_enabled_render_groups;
         }
 
+        /*!
+         * \brief Get all enabled render groups
+         *
+         * \sa RenderGroupIDList
+         */
+        [[maybe_unused]] inline void add_supported_font(const std::string& font_tag, SDL::DirectFontContainer font)
+        {
+            if(!m_fonts_container.contains(font_tag))
+                m_fonts_container[font_tag] = std::move(font);
+            else
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to add font with tag that already contains in the render scene");
+        }
 
-	private:
+        /*!
+         * \brief Get all enabled render groups
+         *
+         * \sa RenderGroupIDList
+         */
+        [[maybe_unused]] inline void remove_supported_font(const std::string& font_tag)
+        {
+            if(!m_fonts_container.contains(font_tag))
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to remove font with tag that do not contains in the render scene");
+            else
+                m_fonts_container.erase(font_tag);
+        }
+
+
+    private:
 		std::ptrdiff_t get_render_group_by_id(RenderGroupID render_group);
 
 	private:
@@ -163,5 +199,7 @@ namespace SDL
         SDL::RenderGroupIDList         m_enabled_render_groups;
         SDL::RenderGroupIDContainer    m_render_group_id_to_internal_id;
         SDL::RenderGroupNameContainer  m_render_group_names;
+
+        SDL::RenderSceneFontContainer  m_fonts_container;
 	};
 }

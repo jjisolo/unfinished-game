@@ -1,13 +1,10 @@
-#include <DirectTextureContainer.h>
+#include "DirectTextureContainer.h"
 
 [[maybe_unused]] void SDL::DirectTextureContainer::render(SDL::DirectRendererHandle renderer_handle) const
 {
-    // If the texture is enabled
+    // If the texture is enabled(means it holds some data, and do not released)
     if(m_direct_object_state == SDL::DirectObjectState::Enabled)
-    {
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t --- Rendering the texture %s", m_direct_object_name.c_str());
         SDL_RenderCopy(renderer_handle, m_shared_texture.get(), &m_texture_source, &m_texture_destination);
-    }
 }
 
 [[maybe_unused]] void SDL::DirectTextureContainer::enable(SDL::DirectRendererHandle renderer_handle, std::shared_ptr<SDL::DirectTextureFactory> direct_factory)
@@ -25,15 +22,29 @@
     switch(m_shared_texture_load_variant)
     {
         // The class is the image container that works directly with an SDL_Image library
-        case SDL::SharedTextureLoadVariant::LoadImageByPath:
+        case SDL::DirectTextureContainerLoadVariant::LoadImage:
         {
             // Load the texture from image, and wrap its pointer into the SharedDirectTexture(typedef) container
             //
             // If we're unable to load the texture airbag, there's no texture going to be appearing on the screen,
             // so we're making a maybe bad design choice to raise an error, and stop the program
-            m_shared_texture = SDL::SharedDirectTexture(direct_factory->create_texture_from_image(
+            m_shared_texture = SDL::SharedDirectTexture(direct_factory->load_texture(
                 renderer_handle,
                 m_direct_object_name
+            ), SDL_DestroyTexture);
+
+            break;
+        }
+
+        case SDL::DirectTextureContainerLoadVariant::LoadFont:
+        {
+            // Load the texture from image, and wrap its pointer into the SharedDirectTexture(typedef) container
+            //
+            // If we're unable to load the texture airbag, there's no texture going to be appearing on the screen,
+            // so we're making a maybe bad design choice to raise an error, and stop the program
+            m_shared_texture = SDL::SharedDirectTexture(direct_factory->load_texture(
+                    renderer_handle,
+                    m_direct_object_name
             ), SDL_DestroyTexture);
 
             break;
@@ -45,7 +56,7 @@
             //
             // Actually we're loading the airbag twice(if it does not exist), but who cares about the performance,
             // when the internal structure of the render_object is broken
-            m_shared_texture = SDL::SharedDirectTexture(direct_factory->create_texture_from_image(
+            m_shared_texture = SDL::SharedDirectTexture(direct_factory->load_texture(
                     renderer_handle,
                     direct_factory->get_texture_airbag()
             ), SDL_DestroyTexture);
