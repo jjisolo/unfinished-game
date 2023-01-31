@@ -102,7 +102,11 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
                     m_enabled_render_groups.push_back(static_cast<int>(render_group_id));
                     render_object_backend  .enable(m_binded_renderer_handle, m_binded_texture_factory);
                 } else {
-                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Non-exhaustive visitor in [SDL::RenderingManager::render]");
+                    // The visitor did not find any appropriate type, for now it could be either because
+                    // the project is under development and this variant can change frequently or because
+                    // the user passed the worng type to the variant. In all cases the abort exception
+                    // should now be thrown as it is not an critical issue
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Non-exhaustive visitor in [SDL::RenderingManager::enable_render_group]");
                 }
             }, render_object);
         }

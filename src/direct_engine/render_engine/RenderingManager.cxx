@@ -47,15 +47,18 @@ void SDL::RenderingManager::render()
                         if constexpr(std::is_same_v<RenderObjectType, SDL::DirectTextureContainer>) {
                             render_object_backend.render(active_render_scene.m_binded_renderer_handle);
                         } else {
+                            // The visitor did not find any appropriate type, for now it could be either because
+                            // the project is under development and this variant can change frequently or because
+                            // the user passed the worng type to the variant. In all cases the abort exception
+                            // should now be thrown as it is not an critical issue
                             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Non-exhaustive visitor in [SDL::RenderingManager::render]");
                         }
                     }, enabled_render_object);
                 }
                 catch(const std::bad_variant_access& exception)
                 {
-                    // The render_object is somehow valueless_by_exception, we are
-                    // just logging the error and then to the rest of the job
-                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "The render_object is valueless_by_exception!");
+                    // The render_object is somehow valueless_by_exception, we are just logging the error and then to the rest of the job
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- The render_object is valueless_by_exception!");
                 }
             }
         }
