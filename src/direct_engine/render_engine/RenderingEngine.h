@@ -19,3 +19,9 @@
 #define VectorFind(vector, item)         (std::find((vector).begin(), (vector).end(), (item)))
 #define VectorFindBinary(vector, item)   ((VectorFind((vector), (item)) != (vector).end()))
 #define VectorFindSuccess(iter, vector)  ((iter) != (vector).end())
+
+namespace SDL::priv
+{
+    template<class> inline constexpr bool always_false_v = false;
+}
+

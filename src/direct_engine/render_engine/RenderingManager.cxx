@@ -39,22 +39,23 @@ void SDL::RenderingManager::render()
 
             for(auto& enabled_render_object: enabled_render_group)
             {
-                // As soon as each render object backend contained in the union render_object
-                // is a standardized object with enable/disable/render function inside of it
-                // we are free to just check if the container is empty, and otherwise just call
-                // the enable function
-                if (enabled_render_object.index() != std::variant_npos)
+                try
                 {
-                    switch (enabled_render_object.index())
-                    {
-                        // The variant holds the SDL::DirectTextureContainer class
-                        case SDL::priv::RenderObjectVariantIndex_DirectTextureContainer:
-                        {
-                            auto &render_object_backend = std::get<SDL::DirectTextureContainer>(enabled_render_object);
+                    std::visit([&active_render_scene](auto&& render_object_backend) {
+                        using RenderObjectType = std::decay_t<decltype(render_object_backend)>;
+                        // Iterate through each variant type, and do the job for each type.
+                        if constexpr(std::is_same_v<RenderObjectType, SDL::DirectTextureContainer>) {
                             render_object_backend.render(active_render_scene.m_binded_renderer_handle);
-                            break;
+                        } else {
+                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Non-exhaustive visitor in [SDL::RenderingManager::render]");
                         }
-                    }
+                    }, enabled_render_object);
+                }
+                catch(const std::bad_variant_access& exception)
+                {
+                    // The render_object is somehow valueless_by_exception, we are
+                    // just logging the error and then to the rest of the job
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "The render_object is valueless_by_exception!");
                 }
             }
         }

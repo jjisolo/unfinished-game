@@ -14,7 +14,6 @@ std::ptrdiff_t SDL::RenderScene::get_render_group_by_id(const SDL::RenderGroupID
 	throw std::invalid_argument("Specified ID does not exists in the table");
 }
 
-
 [[maybe_unused]] void SDL::RenderScene::push_to_render_group(const SDL::RenderGroupName& render_group, SDL::RenderObject render_object)
 {
 	// Check if this name exists in the name container, if it
@@ -48,7 +47,7 @@ void SDL::RenderScene::push_to_render_group(const SDL::RenderGroupID render_grou
 		m_render_group_id_to_internal_id.push_back(render_group);
 		m_render_groups                 .emplace_back();
 
-		render_group_index = m_render_group_id_to_internal_id.size() - 1;
+		render_group_index = static_cast<std::ptrdiff_t>(m_render_group_id_to_internal_id.size() - 1);
 		SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- The new render group container has been created");
 	}
 
@@ -65,8 +64,8 @@ void SDL::RenderScene::alias_render_group(const SDL::RenderGroupID render_group_
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- The name %s is already aliased", aliased_name.c_str());
 
-		// Throw the exception
-		throw std::invalid_argument("Specified name does already exists in the table");
+		// Throw the invalid_argument exception as the specified name already exists in the table
+		throw SDL::DirectInvalidArgument();
 	}
 
 	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- The name %s was aliased to the ID of %d", aliased_name.c_str(), render_group_id);
@@ -102,6 +101,8 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
                 if constexpr(std::is_same_v<RenderObjectType, SDL::DirectTextureContainer>) {
                     m_enabled_render_groups.push_back(static_cast<int>(render_group_id));
                     render_object_backend  .enable(m_binded_renderer_handle, m_binded_texture_factory);
+                } else {
+                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Non-exhaustive visitor in [SDL::RenderingManager::render]");
                 }
             }, render_object);
         }
