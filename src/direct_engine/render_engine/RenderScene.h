@@ -5,18 +5,6 @@
 
 namespace SDL
 {
-    namespace priv
-    {
-        // RenderObject variant index(std::variant::index) to the data structure
-        // name, absolutely redundant just the code sugar
-        static constexpr const std::uint8_t RenderObjectVariantIndex_DirectTextureContainer = 0u;
-        // ...
-
-        template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-        // explicit deduction guide (not needed as of C++20)
-        template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
-    }
-
     struct DirectFontContainer
     {
         SDL::DirectFontRelativePath   path;
