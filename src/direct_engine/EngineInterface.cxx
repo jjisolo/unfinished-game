@@ -137,23 +137,26 @@ void SDL::EngineInterface::builtin_on_user_create()
 
 void SDL::EngineInterface::builtin_on_user_update()
 {
-	// All SDL2 system events
-    for (SDL_Event processed_event;SDL_PollEvent(&processed_event);)
+    // A union that contains structures for the different event types.
+    SDL_Event processed_event;
+
+    // Pump the event loop, gathering events from the input devices
+    SDL_PumpEvents();
+
+    // Update the state of the mouse and keyboard
+    m_keyboard_state -> update(processed_event);
+    m_mouse_state    -> update(processed_event);
+
+    // All SDL2 system events
+    for (;SDL_PollEvent(&processed_event);)
 	{
-        // Pump the event loop, gathering events from the input devices
-        SDL_PumpEvents();
-
-        // Update the state of the mouse and keyboard
-        m_keyboard_state -> update(processed_event);
-        m_mouse_state    -> update(processed_event);
-
 		switch (processed_event.type)
 		{
             // SDL_QUIT: User hit the quit button on the application window
 			case SDL_QUIT:
 				m_application_should_close = true;
 				break;
-        }
+		}
 	}
 }
 
