@@ -104,7 +104,7 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
                 } else {
                     // The visitor did not find any appropriate type, for now it could be either because
                     // the project is under development and this variant can change frequently or because
-                    // the user passed the worng type to the variant. In all cases the abort exception
+                    // the user passed the wrong type to the variant. In all cases the abort exception
                     // should now be thrown as it is not an critical issue
                     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Non-exhaustive visitor in [SDL::RenderingManager::enable_render_group]");
                 }

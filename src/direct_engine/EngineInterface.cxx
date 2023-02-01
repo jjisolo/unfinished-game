@@ -18,7 +18,7 @@ SDL_Renderer* SDL::EngineInterface::get_renderer_handle()
 	return window_position;
 }
 
-SDL::DirectWindowPosition SDL::EngineInterface::get_window_dimensions()
+[[maybe_unused]] SDL::DirectWindowPosition SDL::EngineInterface::get_window_dimensions()
 {
 	SDL::DirectWindowPosition window_dimensions;
 	SDL_GetWindowSize(m_window_handle.get(), &window_dimensions.first, &window_dimensions.second);
@@ -70,7 +70,7 @@ void SDL::EngineInterface::builtin_on_user_create()
 
 	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Loading the window properties data.");
 
-	if (m_window_startup_details.load() == false)
+	if (!m_window_startup_details.load())
 	{
 		SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- As the read operation failed, the default launch info is going to be used");
 
@@ -108,9 +108,9 @@ void SDL::EngineInterface::builtin_on_user_create()
 		));
 
 		m_renderer_handle.reset(SDL_CreateRenderer(
-			m_window_handle.get(),
-			m_window_startup_details.m_datum.m_last_known_rendering_device,
-			m_window_startup_details.m_datum.m_last_known_renderer_flags
+			                 m_window_handle.get(),
+			static_cast<int>(m_window_startup_details.m_datum.m_last_known_rendering_device),
+			                 m_window_startup_details.m_datum.m_last_known_renderer_flags
 		));
 
 		m_registry.m_current_window_dimensions = std::make_pair(
@@ -119,13 +119,13 @@ void SDL::EngineInterface::builtin_on_user_create()
 		);
 	}
 
-	if (m_window_handle.get()   == NULL)
+	if (m_window_handle.get()   == nullptr)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL_Window structure initialization failed!");
 		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- The following error message is: %s", SDL_GetError());
 	}
 	
-	if (m_renderer_handle.get() == NULL)
+	if (m_renderer_handle.get() == nullptr)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL_Renderer structure initialization failed!");
 		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- The following error message is: %s", SDL_GetError());
@@ -137,17 +137,23 @@ void SDL::EngineInterface::builtin_on_user_create()
 
 void SDL::EngineInterface::builtin_on_user_update()
 {
-	for (SDL_Event processed_event; SDL_PollEvent(&processed_event);)
+	// All SDL2 system events
+    for (SDL_Event processed_event;SDL_PollEvent(&processed_event);)
 	{
+        // Pump the event loop, gathering events from the input devices
+        SDL_PumpEvents();
+
+        // Update the state of the mouse and keyboard
+        m_keyboard_state -> update(processed_event);
+        m_mouse_state    -> update(processed_event);
+
 		switch (processed_event.type)
 		{
+            // SDL_QUIT: User hit the quit button on the application window
 			case SDL_QUIT:
-			{
-				SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- The application recieved QUIT signal, proceeding to the program exit");
 				m_application_should_close = true;
 				break;
-			}
-		}
+        }
 	}
 }
 
@@ -158,6 +164,7 @@ void SDL::EngineInterface::start()
 	while (m_application_should_close != true)
 	{
         m_binded_render_manager->render();
+
 		builtin_on_user_update();
 		on_user_update();
 	}
@@ -183,16 +190,19 @@ void SDL::EngineInterface::stop()
                 &m_window_startup_details.m_datum.m_last_known_dimensions.second
         );
 
+        // TODO: rendering device and rendering flags change implementation
         m_window_startup_details.m_datum.m_last_known_rendering_device = SDL::priv::default_rendering_device;
         m_window_startup_details.m_datum.m_last_known_renderer_flags   = SDL::priv::default_renderer_flags;
         m_window_startup_details.m_datum.m_last_known_window_flags     = SDL::priv::default_window_flags;
         m_window_startup_details.save();
 
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Deinitializing the SDL2 subsystems");
-        SDL_Quit();
-        TTF_Quit();
-        IMG_Quit();
-        Mix_Quit();
+
+        if(SDL_WasInit(SDL_INIT_VIDEO)) SDL_Quit();
+        if(TTF_WasInit())               TTF_Quit();
+                                        IMG_Quit();
+                                        Mix_Quit();
+
     }
     else
     {
@@ -211,12 +221,11 @@ void SDL::EngineInterface::stop()
 		width, height
 	);
 
+    // Update the window dimensions in the internal window registry
 	m_registry.m_current_window_dimensions = std::make_pair(width, height);
 
-	if (!logic_resize)
-	{
-		SDL_SetWindowSize(m_window_handle.get(), width, height);
-	}
+    // If it is not a logic resize, update the actual window
+	if (!logic_resize) SDL_SetWindowSize(m_window_handle.get(), static_cast<int>(width), static_cast<int>(height));
 }
 
 bool SDL::EngineInterface::on_user_update()
