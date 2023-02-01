@@ -4,8 +4,8 @@ add_subdirectory(direct_engine)
 
 # Add source to this project's executable.
 add_executable (dachshund 
-	"EntryPoint.cxx"	 
-)
+	"EntryPoint.cxx"
+		direct_engine/MouseState.cxx)
 
 # We use the library for each subfolder
 target_link_libraries(dachshund

@@ -10,7 +10,7 @@ add_library(dachshund_direct_engine STATIC
 	"EngineInterface.cxx"
 	"EngineInterface.h"
 	"EngineRegistry.h"
-)
+        MouseState.h KeyboardState.cxx KeyboardState.h)
 
 # Create alias for the library for better looking
 add_library(SDL2::Engine ALIAS dachshund_direct_engine)
