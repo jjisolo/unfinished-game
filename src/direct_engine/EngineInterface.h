@@ -13,6 +13,8 @@
 #include <utility>
 
 #include <Engine.h>
+#include <MouseState.h>
+#include <KeyboardState.h>
 #include <EngineRegistry.h>
 #include <StartupManager.h>
 #include <RenderingManager.h>
@@ -61,6 +63,9 @@ namespace SDL
             m_window_handle         (nullptr, SDL_DestroyWindow),
             m_renderer_handle       (nullptr, SDL_DestroyRenderer)
         {
+            m_keyboard_state.reset(new SDL::priv::KeyboardState());
+            m_mouse_state   .reset(new SDL::priv::MouseState());
+
             builtin_on_user_create();
             on_user_create();
         }
@@ -79,7 +84,7 @@ namespace SDL
             /*!
              * \brief Get the dimensions of the application root window
              */
-            DirectWindowDimensions get_window_dimensions();
+            [[maybe_unused]] DirectWindowDimensions get_window_dimensions();
 
             /*!
              * \brief Start the engine.
@@ -156,6 +161,9 @@ namespace SDL
 
             SDL::priv::EngineRegistry         m_registry;
             SDL::priv::WindowStartupDetails   m_window_startup_details;
-            std::shared_ptr<RenderingManager> m_binded_render_manager;
+
+            std::shared_ptr<SDL::priv::MouseState>     m_mouse_state;
+            std::shared_ptr<SDL::priv::KeyboardState>  m_keyboard_state;
+            std::shared_ptr<RenderingManager>          m_binded_render_manager;
     };
 }
