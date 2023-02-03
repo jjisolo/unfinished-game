@@ -34,7 +34,7 @@ static constexpr const std::string_view default_texture_airbag("data/assets/unde
         return;
     }
 
-    // The object is disabled but the texture container stores some data, it means
+    // The object is disabled but the texture container stores something, it means
     // that the object is initialized with the foreign texture data(because texture
     // cannot just `dont't free` simultaneously
     if(m_shared_texture != nullptr) {
