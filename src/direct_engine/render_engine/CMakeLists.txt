@@ -9,8 +9,7 @@ add_library(dachshund_render_engine STATIC
 	"RenderScene.h"
 	"RenderScene.cxx"
     "RenderingExceptions.h"
-	"texture_components/DirectTextureFactory.cxx"
-	"engine_interfaces/DirectObjectContainerPreset.cxx"
+        "engine_interfaces/DirectObjectContainerPreset.cxx"
 	"engine_interfaces/DirectObjectContainerPreset.h")
 
 # Create alias for the library for better looking

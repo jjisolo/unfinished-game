@@ -40,7 +40,7 @@ namespace SDL::priv
         /*!
          * \brief Enable the object
          */
-        [[maybe_unused]] virtual void enable(SDL::DirectRendererHandle direct_renderer_handle, std::shared_ptr<SDL::DirectTextureFactory> direct_factory) = 0;
+        [[maybe_unused]] virtual void enable(SDL::DirectRendererHandle direct_renderer_handle) = 0;
 
         /*!
         * \brief Disable the object

@@ -1,3 +1,4 @@
+#include <DirectTextureFactory.h>
 #include <RenderScene.h>
 
 std::ptrdiff_t SDL::RenderScene::get_render_group_by_id(const SDL::RenderGroupID render_group)
@@ -74,6 +75,52 @@ void SDL::RenderScene::alias_render_group(const SDL::RenderGroupID render_group_
 	m_render_group_names[aliased_name] = render_group_id;
 }
 
+void SDL::RenderScene::push_text_to_render_group(
+    SDL::RenderGroupID           render_group,
+    SDL::DirectFontName          font_name,
+    SDL::DirectFontTextContainer text,
+    SDL::DirectColor             color_fg,
+    SDL::DirectColor             color_bg,
+    SDL::SharedTextureRect       source,
+    SDL::SharedTextureRect       destination)
+{
+    if(!m_fonts_container.contains(font_name)) {
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Font %s does not supported", font_name.c_str());
+        throw SDL::DirectInvalidArgument();
+    }
+
+    // The index of the render group associated with the render_group ID
+    std::ptrdiff_t render_group_index;
+
+    try
+    {
+        // Find out the index of the render group by its ID
+        render_group_index = get_render_group_by_id(render_group);
+    }
+    catch (const std::invalid_argument& exception)
+    {
+        // As soon as the specified ID is not in the table, the new
+        // render group should be created
+        m_render_group_id_to_internal_id.push_back(render_group);
+        m_render_groups                 .emplace_back();
+
+        render_group_index = static_cast<std::ptrdiff_t>(m_render_group_id_to_internal_id.size() - 1);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- The new render group container has been created");
+    }
+
+    m_render_groups.at(render_group_index).emplace_back(
+        SDL::DirectTextureContainer(
+            SDL::DirectTextureFactory::load_font(
+                m_binded_renderer_handle,
+                m_fonts_container.at(font_name)._data,
+                m_fonts_container.at(font_name).kind,
+                std::string(text), color_fg, color_bg
+            ),
+            font_name, source, destination
+        )
+    );
+}
+
 SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
 {
 	SDL::RenderGroupID render_group_id_iterator{0};
@@ -100,7 +147,7 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
                 // Iterate through each variant type, and do the job for each type.
                 if constexpr(std::is_same_v<RenderObjectType, SDL::DirectTextureContainer>) {
                     m_enabled_render_groups.push_back(static_cast<int>(render_group_id));
-                    render_object_backend  .enable(m_binded_renderer_handle, m_binded_texture_factory);
+                    render_object_backend  .enable(m_binded_renderer_handle);
                 } else {
                     // The visitor did not find any appropriate type, for now it could be either because
                     // the project is under development and this variant can change frequently or because

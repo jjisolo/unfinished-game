@@ -3,13 +3,31 @@
 #include <RenderingEngine.h>
 #include <DirectTextureContainer.h>
 
+#include <utility>
+
 namespace SDL
 {
-    struct DirectFontContainer
+    using DirectFontHandle         = TTF_Font*;
+    using DirectFontName           = std::string;
+    using DirectFontTextContainer  = const std::string_view&;
+
+    class DirectFontContainer
     {
+    public:
+        explicit DirectFontContainer(
+                SDL::DirectFontRelativePath   font_path,
+                SDL::DirectFontDisplaySize    font_size    = 12,
+                SDL::DirectFontDisplayVariant font_variant = SDL::DirectFontDisplayVariant :: Normal,
+                SDL::DirectFontRenderKind     font_kind    = SDL::DirectFontRenderKind     :: BlendedWrapped):
+            path(std::move(font_path)), size(font_size), variant(font_variant), kind(font_kind), _data(nullptr)
+        {
+        }
+
         SDL::DirectFontRelativePath   path;
         SDL::DirectFontDisplaySize    size;
         SDL::DirectFontDisplayVariant variant;
+        SDL::DirectFontRenderKind     kind;
+        SDL::DirectFontHandle         _data;
     };
 
     using RenderObject         = std::variant<SDL::DirectTextureContainer, SDL_Texture*>;
@@ -23,7 +41,7 @@ namespace SDL
 	using RenderGroupIDContainer    = std::vector       <SDL::RenderGroupID>;
 	using RenderGroupNameContainer  = std::unordered_map<std::string, SDL::RenderGroupID>;
 
-    using RenderSceneFontContainer  = std::unordered_map<std::string, struct SDL::DirectFontContainer>;
+    using RenderSceneFontContainer  = std::unordered_map<SDL::DirectFontName, struct SDL::DirectFontContainer>;
 
 
     /*!
@@ -50,20 +68,10 @@ namespace SDL
         * \brief Construct RenderScene class
         *
         * \param direct_renderer_handle a handle to an legacy SDL2 renderer
-        * \param direct_texture_factory a shared pointer with an initialized
-        * texture factory
         *
-        * \sa SDL::DirectTextureFactory
         * \sa SDL::EngineInterface::get_renderer_handle()
-        *
         */
-        explicit RenderScene(
-                SDL::DirectRendererHandle                  direct_renderer_handle,
-                std::shared_ptr<SDL::DirectTextureFactory> direct_texture_factory
-
-        ):
-                m_binded_renderer_handle(direct_renderer_handle),
-                m_binded_texture_factory(std::move(direct_texture_factory))
+        explicit RenderScene(SDL::DirectRendererHandle direct_renderer_handle): m_binded_renderer_handle(direct_renderer_handle)
         {
         }
 
@@ -97,6 +105,21 @@ namespace SDL
 		* \param render_object render object that is moved to the render group
 		*/
         [[maybe_unused]] void push_to_render_group(SDL::RenderGroupID render_group, SDL::RenderObject render_object);
+
+        /*!
+		* \brief Push render text(as texture) to the render group using render group ID
+		*
+		* \param render_group ID of the render group
+		* \param text         The text that is going to be rendered
+		*/
+        [[maybe_unused]] void push_text_to_render_group(
+                SDL::RenderGroupID           render_group,
+                SDL::DirectFontName          font_name,
+                SDL::DirectFontTextContainer text         = "Sample text",
+                SDL::DirectColor             color_fg     = {255, 255, 255, 255},
+                SDL::DirectColor             color_bg     = {0,   0,   0,   255},
+                SDL::SharedTextureRect       source       = {0,   0,   0,   0  },
+                SDL::SharedTextureRect       destination  = {0,   0,   0,   0  });
 
         /*!
 		* \brief Enable render group
@@ -142,7 +165,6 @@ namespace SDL
         */
         [[maybe_unused]] void disable_render_group(const SDL::RenderGroupName& render_group);
 
-
         /*!
          * \brief Get all enabled render groups
          *
@@ -160,8 +182,14 @@ namespace SDL
          */
         [[maybe_unused]] inline void add_supported_font(const std::string& font_tag, SDL::DirectFontContainer font)
         {
+            // Validate the given structure
+            assert_font_container_invariants(font);
+
+            // Load the font
+            load_font_from_container(font);
+
             if(!m_fonts_container.contains(font_tag))
-                m_fonts_container[font_tag] = std::move(font);
+                m_fonts_container.insert({font_tag, font});
             else
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to add font with tag that already contains in the render scene");
         }
@@ -179,13 +207,72 @@ namespace SDL
                 m_fonts_container.erase(font_tag);
         }
 
-
     private:
 		std::ptrdiff_t get_render_group_by_id(RenderGroupID render_group);
 
-	private:
-        std::shared_ptr<SDL::DirectTextureFactory> m_binded_texture_factory;
+        /*!
+         * \brief Load the font using the information from the given container
+         *
+         * \sa assert_font_container_invariants()
+         * \sa SDL::DirectFontContainer
+         */
+        [[maybe_unused]] static void load_font_from_container(SDL::DirectFontContainer& font)
+        {
+            // Load the font using the SDL2_ttf library
+            font._data = TTF_OpenFont(std::string(font.path).c_str(), static_cast<int>(font.size));
 
+            // Check if the font loaded correctly
+            if(font._data == nullptr) {
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Unable to load font %s", std::string(font.path).c_str());
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- %s", TTF_GetError());
+                throw SDL::DirectTrueTypeSystemException();
+            }
+
+            int font_style{TTF_STYLE_NORMAL};
+            switch (font.variant)
+            {
+                case SDL::DirectFontDisplayVariant::Normal:              font_style = TTF_STYLE_NORMAL;                         break;
+                case SDL::DirectFontDisplayVariant::Bold:                font_style = TTF_STYLE_BOLD;                           break;
+                case SDL::DirectFontDisplayVariant::BoldItalic:          font_style = TTF_STYLE_BOLD|TTF_STYLE_ITALIC;          break;
+                case SDL::DirectFontDisplayVariant::Italic:              font_style = TTF_STYLE_ITALIC;                         break;
+                case SDL::DirectFontDisplayVariant::Underline:           font_style = TTF_STYLE_UNDERLINE;                      break;
+                case SDL::DirectFontDisplayVariant::UnderlineItalic:     font_style = TTF_STYLE_UNDERLINE|TTF_STYLE_ITALIC;     break;
+                case SDL::DirectFontDisplayVariant::StrikeThrough:       font_style = TTF_STYLE_STRIKETHROUGH;                  break;
+                case SDL::DirectFontDisplayVariant::StrikeThroughItalic: font_style = TTF_STYLE_STRIKETHROUGH|TTF_STYLE_ITALIC; break;
+                default: font_style = TTF_STYLE_NORMAL; break;
+            }
+
+            TTF_SetFontStyle  (font._data, font_style);
+            TTF_SetFontHinting(font._data, TTF_HINTING_LIGHT_SUBPIXEL);
+        }
+
+        /*!
+         * \brief Assert the font structure invariants
+         *
+         * Validate variables that are present in the DirectFontContainer structure
+         *
+         * \sa SDL::DirectFontContainer
+         */
+        [[maybe_unused]] static void assert_font_container_invariants(SDL::DirectFontContainer& font)
+        {
+            if(font.path.empty()) {
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to load the font with invalid font path");
+                throw DirectInvalidArgument();
+            }
+
+            if(font.size <= 0) {
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to load the font with invalid font size(should be >0)");
+                throw DirectInvalidArgument();
+            }
+
+            if(font._data != nullptr) {
+                SDL_LogWarn (SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to load the already initialized font");
+                SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Cleaning up the font data...");
+                TTF_CloseFont(font._data);
+            }
+        }
+
+	private:
         SDL::DirectRendererHandle      m_binded_renderer_handle;
 		SDL::RenderGroupContainer      m_render_groups;
         SDL::RenderGroupIDList         m_enabled_render_groups;
@@ -193,5 +280,5 @@ namespace SDL
         SDL::RenderGroupNameContainer  m_render_group_names;
 
         SDL::RenderSceneFontContainer  m_fonts_container;
-	};
+    };
 }

@@ -9,7 +9,6 @@ namespace SDL::UI
 	public:
 
 
-
 	private:
 
 		int asd;

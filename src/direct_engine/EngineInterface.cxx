@@ -36,7 +36,7 @@ void SDL::EngineInterface::builtin_on_user_create()
 	if (SDL_Init(direct_init_flags) != 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL subsystems initialization failed!");
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- The following error message is: %s", SDL_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", SDL_GetError());
 
 		m_application_should_close = true;
 	}
@@ -44,7 +44,7 @@ void SDL::EngineInterface::builtin_on_user_create()
 	if (TTF_Init() != 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL_ttf subsystems initialization failed!");
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- The following error message is: %s", TTF_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", TTF_GetError());
 
 		m_application_should_close = true;
 	}
@@ -52,7 +52,7 @@ void SDL::EngineInterface::builtin_on_user_create()
 	if (!(IMG_Init(image_init_flags) & image_init_flags))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL_image subsystems initialization failed!");
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- The following error message is: %s", IMG_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", IMG_GetError());
 
 		m_application_should_close = true;
 	}
@@ -60,7 +60,7 @@ void SDL::EngineInterface::builtin_on_user_create()
 	if (!(Mix_Init(mixer_init_flags) & mixer_init_flags))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL_mixer subsystems initialization failed!");
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- The following error message is: %s", Mix_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", Mix_GetError());
 
 		m_application_should_close = true;
 	}
@@ -122,13 +122,13 @@ void SDL::EngineInterface::builtin_on_user_create()
 	if (m_window_handle.get()   == nullptr)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL_Window structure initialization failed!");
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- The following error message is: %s", SDL_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", SDL_GetError());
 	}
 	
 	if (m_renderer_handle.get() == nullptr)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL_Renderer structure initialization failed!");
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- The following error message is: %s", SDL_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", SDL_GetError());
 	}
 
 	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- SDL2 structures initialized succesfully");
