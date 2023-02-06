@@ -8,14 +8,25 @@ static constexpr const std::string_view default_texture_airbag("data/assets/unde
     SDL::SharedTextureRect *texture_preprocessed_source;
     SDL::SharedTextureRect *texture_preprocessed_destination;
 
+    // Compare the values of the two direct structs
+    auto compare_direct_structs = [](const SDL::SharedTextureRect& s1, const SDL::SharedTextureRect& s2) -> bool {
+        return std::tie(s1.x, s1.y, s1.w, s1.h) == std::tie(s2.x, s2.y, s2.w, s2.h);
+    };
+
+    // Validate the user-given renderer handle
+    if(renderer_handle == nullptr) {
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "\t--- The provided renderer is NULL, unable to render the textures");
+        throw SDL::DirectInvalidArgument();
+    }
+
     // Check if the source rectangle is invalid(or not provided by the user)
-    if(m_texture_source.h == 0 && m_texture_source.w == 0 && m_texture_source.x == 0 && m_texture_source.y == 0)
+    if(compare_direct_structs(m_texture_source, SDL::NULL_RECT))
         texture_preprocessed_source = nullptr;
     else
         texture_preprocessed_source = const_cast<SDL::SharedTextureRect *>(&m_texture_source);
 
     // Check if the destination rectangle is invalid(or not provided by the user)
-    if(m_texture_destination.h == 0 && m_texture_destination.w == 0 && m_texture_destination.x == 0 && m_texture_destination.y == 0)
+    if(compare_direct_structs(m_texture_destination, SDL::NULL_RECT))
         texture_preprocessed_destination = nullptr;
     else
         texture_preprocessed_destination = const_cast<SDL::SharedTextureRect *>(&m_texture_destination);
@@ -27,6 +38,12 @@ static constexpr const std::string_view default_texture_airbag("data/assets/unde
 
 [[maybe_unused]] void SDL::DirectTextureContainer::enable(SDL::DirectRendererHandle renderer_handle)
 {
+    // Validate the user-given renderer handle
+    if(renderer_handle == nullptr) {
+        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "\t--- The provided renderer is NULL, unable to enable the textures");
+        throw SDL::DirectInvalidArgument();
+    }
+
     // If the object is already enabled, we should either disable and then enable it,
     // or do nothing
     if(m_direct_object_state == SDL::DirectObjectState::Enabled) {
