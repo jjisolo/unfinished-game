@@ -81,9 +81,10 @@ void SDL::RenderScene::push_text_to_render_group(
     SDL::DirectFontTextContainer text,
     SDL::DirectColor             color_fg,
     SDL::DirectColor             color_bg,
-    SDL::SharedTextureRect       source,
-    SDL::SharedTextureRect       destination)
+    SDL::SharedTexturePosition   destination)
 {
+    // If the font is already aliased with some data, we throw
+    // the exception(due to the remove_supported_font() interface)
     if(!m_fonts_container.contains(font_name)) {
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Font %s does not supported", font_name.c_str());
         throw SDL::DirectInvalidArgument();
@@ -108,6 +109,26 @@ void SDL::RenderScene::push_text_to_render_group(
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- The new render group container has been created");
     }
 
+    // Find out how many pixels the provided(by font_name) is occupied by the font
+    SDL::SharedTexturePosition font_size_pixels;
+
+    // Calculate the dimensions of a rendered string of Latin1 text.
+    TTF_SizeText(
+            m_fonts_container.at(font_name)._data,
+            std::string(text).c_str(),
+            reinterpret_cast<int *>(&font_size_pixels.first),
+            reinterpret_cast<int *>(&font_size_pixels.second)
+    );
+
+    // Construct the destination rectangle using the values ahead
+    SDL::SharedTextureRect texture_destination{
+        .x = static_cast<int>(destination.first),
+        .y = static_cast<int>(destination.second),
+        .w = static_cast<int>(font_size_pixels.first),
+        .h = static_cast<int>(font_size_pixels.second),
+    };
+
+    // Add the fresh font texture to the given render group
     m_render_groups.at(render_group_index).emplace_back(
         SDL::DirectTextureContainer(
             SDL::DirectTextureFactory::load_font(
@@ -116,7 +137,7 @@ void SDL::RenderScene::push_text_to_render_group(
                 m_fonts_container.at(font_name).kind,
                 std::string(text), color_fg, color_bg
             ),
-            font_name, source, destination
+            font_name, SDL::NULL_RECT, texture_destination
         )
     );
 }

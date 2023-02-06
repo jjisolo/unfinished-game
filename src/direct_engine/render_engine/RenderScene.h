@@ -43,6 +43,7 @@ namespace SDL
 
     using RenderSceneFontContainer  = std::unordered_map<SDL::DirectFontName, struct SDL::DirectFontContainer>;
 
+    using SharedTexturePosition     = std::pair<std::size_t, std::size_t>;
 
     /*!
      * Render scene is a container for a different render groups(which are build
@@ -118,8 +119,7 @@ namespace SDL
                 SDL::DirectFontTextContainer text         = "Sample text",
                 SDL::DirectColor             color_fg     = {255, 255, 255, 255},
                 SDL::DirectColor             color_bg     = {0,   0,   0,   255},
-                SDL::SharedTextureRect       source       = {0,   0,   0,   0  },
-                SDL::SharedTextureRect       destination  = {0,   0,   0,   0  });
+                SDL::SharedTexturePosition   destination  = {0,   0});
 
         /*!
 		* \brief Enable render group
