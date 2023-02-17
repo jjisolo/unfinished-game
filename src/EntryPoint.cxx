@@ -3,14 +3,18 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 
-#include <EngineInterface.h>
 #include <DirectTextureContainer.h>
 #include <DirectTextureFactory.h>
 #include <RenderingManager.h>
+#include <EngineInterface.h>
 #include <RenderScene.h>
+
+#include "spdlog/spdlog.h"
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
 {
+    spdlog::info("Welcome to spdlog version {}.{}.{}  !", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
+
     std::shared_ptr<SDL::RenderingManager>      render_manager  (new SDL::RenderingManager());
     std::shared_ptr<SDL::EngineInterface>       game_engine     (new SDL::EngineInterface(render_manager));
 
@@ -24,15 +28,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
             {0, 0, 100, 100}
     )));
 
-    menu_scene.push_to_render_group(1, std::move(SDL::DirectTextureContainer(
-            "data/assets/failed.jpg",
-            {0, 0, 100, 100},
-            {100, 100, 100, 100}
-    )));
-
     menu_scene.add_supported_font("roboto-light",
         SDL::DirectFontContainer(
-           "data/fonts/GoogleRoboto/Roboto-Light.ttf", 16,
+           "data/fonts/GoogleRoboto/Roboto-Light.ttf", 24,
             SDL::DirectFontDisplayVariant :: Normal,
             SDL::DirectFontRenderKind     :: Blended
         )
@@ -40,9 +38,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
 
     menu_scene.push_text_to_render_group(1,
         "roboto-light",
-        "Hello, world!",
-        {255, 100, 255, 255}, {0,   0,   0,   255},
-        {0,   0,   0,   0  }, {250, 250, 208,  32}
+        "Test test",
+        {255, 100, 255, 255},
+        {0,   0,   0,   255},
+        {200, 200}
     );
 
     menu_scene.enable_render_group (1);

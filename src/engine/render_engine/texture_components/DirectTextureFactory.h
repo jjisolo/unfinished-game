@@ -79,22 +79,18 @@ namespace SDL
                 SDL_Texture* image_texture;
 
                 image_surface = IMG_Load(texture_path);
-                if(image_surface == nullptr)
-                {
-                    SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- Image %s loading failed", texture_path);
-                    SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", IMG_GetError());
+                if(image_surface == nullptr) {
+                    SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t\t--- %s", IMG_GetError());
                     throw SDL::DirectSystemException();
                 }
 
                 image_texture = SDL_CreateTextureFromSurface(renderer_handle, image_surface);
-                if(image_texture == nullptr)
-                {
-                    SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- Image %s convertation to texture failed", texture_path);
-                    SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", IMG_GetError());
+                if(image_texture == nullptr) {
+                    SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t\t--- %s", IMG_GetError());
                     throw SDL::DirectSystemException();
                 }
 
-                SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Loaded the texture %s", texture_path);
+                SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t\t--- Loaded texture %s", texture_path);
                 SDL_FreeSurface(image_surface);
 
                 return image_texture;
@@ -148,7 +144,6 @@ namespace SDL
             }
 
             if(text_surface == nullptr) {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to render the font!");
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s", TTF_GetError());
                 throw SDL::DirectTrueTypeSystemException();
             }
@@ -156,7 +151,6 @@ namespace SDL
             text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
 
             if(text_texture == nullptr) {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to convert the font surface to the texture!");
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s", SDL_GetError());
                 throw SDL::DirectSystemException();
             }

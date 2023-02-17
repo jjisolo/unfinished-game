@@ -27,6 +27,11 @@ if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
   endif()
 endif()
 
+# Include the formula for the RapidJSON library
+include(vendor/Dependencies.cmake)
+include(vendor/RapidJSON.cmake)
+include(vendor/SpeedLogging.cmake)
+
 # Link this 'library' to use the warnings specified in CompilerWarnings.cmake
 add_library(project_warnings INTERFACE)
 

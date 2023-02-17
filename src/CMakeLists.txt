@@ -1,17 +1,33 @@
 # Add nested folders
-add_subdirectory(direct_engine)
-#add_subdirectory(test)
+add_subdirectory(engine)
 
 # Add source to this project's executable.
 add_executable (dachshund 
 	"EntryPoint.cxx"
-		direct_engine/MouseState.cxx)
+		engine/MouseState.cxx)
 
 # We use the library for each subfolder
 target_link_libraries(dachshund
+	# Internal project libraries
 	dachshund_direct_engine
 	dachshund_render_engine
 	dachshund_interface_engine
+)
+
+# Set up dependencies
+add_dependencies(dachshund ${DEP_PROJECTS})
+
+# Setup dependency include directories
+target_include_directories(
+	dachshund
+	PUBLIC
+	${DEP_INSTALL_DIR}/include
+)
+
+# Link dependencies
+target_link_libraries(
+	dachshund
+	-L${DEP_INSTALL_DIR}/lib
 )
 
 # Add the SDL2 include paths
