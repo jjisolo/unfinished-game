@@ -47,12 +47,12 @@ namespace SDL
         {
             // Assert the texture handle, it should not be NULL
             if(texture_handle == nullptr) {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- The texture %s data is invalid", std::string(font_name).c_str());
+                spdlog::error("The texture {} data is invalid", std::string(font_name).c_str());
                 throw SDL::DirectInvalidArgument();
             }
 
             // Log this!
-            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t\t--- Loaded texture %s (baked from the font)", font_name.c_str());
+            spdlog::debug("Loaded texture {} (baked from the font)", font_name.c_str());
 
             // Create shared texture pointer
             m_shared_texture = SDL::SharedDirectTexture(texture_handle, SDL_DestroyTexture);

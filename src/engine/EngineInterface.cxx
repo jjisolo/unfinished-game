@@ -27,52 +27,47 @@ SDL_Renderer* SDL::EngineInterface::get_renderer_handle()
 
 void SDL::EngineInterface::builtin_on_user_create()
 {
-    SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_DEBUG);
-    SDL_LogSetPriority(SDL_LOG_CATEGORY_SYSTEM,		 SDL_LOG_PRIORITY_ERROR);
-
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::builtin_on_user_create [%p]", this);
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Initializing SDL2 subsystems.");
+    spdlog::info("Initializing SDL2 subsystems...");
 
 	if (SDL_Init(direct_init_flags) != 0)
 	{
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL subsystems initialization failed!");
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", SDL_GetError());
+        spdlog::critical("SDL subsystems initialization failed");
+        spdlog::critical("{}", SDL_GetError());
 
 		m_application_should_close = true;
 	}
 
 	if (TTF_Init() != 0)
 	{
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL_ttf subsystems initialization failed!");
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", TTF_GetError());
+        spdlog::critical("SDL_ttf subsystems initialization failed");
+        spdlog::critical("{}", TTF_GetError());
 
 		m_application_should_close = true;
 	}
 
 	if (!(IMG_Init(image_init_flags) & image_init_flags))
 	{
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL_image subsystems initialization failed!");
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", IMG_GetError());
+        spdlog::critical("SDL_image subsystems initialization failed");
+        spdlog::critical("{}", IMG_GetError());
 
 		m_application_should_close = true;
 	}
 
 	if (!(Mix_Init(mixer_init_flags) & mixer_init_flags))
 	{
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL_mixer subsystems initialization failed!");
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", Mix_GetError());
+        spdlog::critical("SDL_mixer subsystems initialization failed");
+        spdlog::critical("{}", Mix_GetError());
 
 		m_application_should_close = true;
 	}
 
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- SDL2 subsystems initialized succesfully.");
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Initializing basic SDL2 structures.");
-
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Loading the window properties data.");
+    spdlog::info("SDL2 subsystems initialized succesfully.");
+    spdlog::info("Initializing basic SDL2 structures.");
+    spdlog::info("Loading the window properties data.");
 
 	if (!m_window_startup_details.load())
 	{
-		SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- As the read operation failed, the default launch info is going to be used");
+        spdlog::debug("As the read operation failed, the default launch info is going to be used");
 
 		m_window_handle.reset(SDL_CreateWindow(
 			SDL::priv::default_window_title,
@@ -96,7 +91,7 @@ void SDL::EngineInterface::builtin_on_user_create()
 	}
 	else
 	{
-		SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Using the previously saved launch info");
+        spdlog::debug("Read operation succeeded, using the previously saved launch info");
 
 		m_window_handle.reset(SDL_CreateWindow(
 			SDL::priv::default_window_title,
@@ -121,17 +116,17 @@ void SDL::EngineInterface::builtin_on_user_create()
 
 	if (m_window_handle.get()   == nullptr)
 	{
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL_Window structure initialization failed!");
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", SDL_GetError());
+        spdlog::critical("SDL_Window structure initialization failed!");
+        spdlog::critical("{}", SDL_GetError());
 	}
 	
 	if (m_renderer_handle.get() == nullptr)
 	{
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- SDL_Renderer structure initialization failed!");
-		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t--- %s", SDL_GetError());
+        spdlog::critical("SDL_Renderer structure initialization failed!");
+        spdlog::critical("{}", SDL_GetError());
 	}
 
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- SDL2 structures initialized succesfully");
+    spdlog::info("SDL2 structures initialized succesfully");
 	m_application_should_close = false;
 }
 
@@ -162,8 +157,6 @@ void SDL::EngineInterface::builtin_on_user_update()
 
 void SDL::EngineInterface::start()
 {
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::start [%p]", this);
-
 	while (m_application_should_close != true)
 	{
         m_binded_render_manager->render();
@@ -175,11 +168,9 @@ void SDL::EngineInterface::start()
 
 void SDL::EngineInterface::stop()
 {
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::EngineInterface::stop [%p]", this);
-
     if(SDL_WasInit(SDL_INIT_VIDEO))
     {
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Saving the window properties data");
+        spdlog::info("Saving the window properties data");
 
         SDL_GetWindowPosition(
                 m_window_handle.get(),
@@ -199,7 +190,7 @@ void SDL::EngineInterface::stop()
         m_window_startup_details.m_datum.m_last_known_window_flags     = SDL::priv::default_window_flags;
         m_window_startup_details.save();
 
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Deinitializing the SDL2 subsystems");
+        spdlog::info("Deinitializing the SDL2 subsystems");
 
         if(SDL_WasInit(SDL_INIT_VIDEO)) SDL_Quit();
         if(TTF_WasInit())               TTF_Quit();
@@ -209,16 +200,15 @@ void SDL::EngineInterface::stop()
     }
     else
     {
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to stop unitialized engine");
+        spdlog::error("Attempted to stop unitialized engine");
         throw SDL::DirectSystemException();
     }
 }
 
 [[maybe_unused]] void SDL::EngineInterface::resize_window(const std::uint32_t width, const std::uint32_t height, const BinaryState16 logic_resize)
 {
-	SDL_LogDebug(
-		SDL_LOG_CATEGORY_APPLICATION,
-		"\t--- Window resized from (%d, %d) to (%d, %d)",
+	spdlog::debug(
+		"\t--- Window resized from ({}, {}) to ({}, {})",
 		m_registry.m_current_window_dimensions.first,
 		m_registry.m_current_window_dimensions.second,
 		width, height

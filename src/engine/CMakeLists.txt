@@ -24,6 +24,12 @@ target_include_directories(dachshund_direct_engine
 	${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+# Setup dependency include directories
+target_include_directories(dachshund_direct_engine PUBLIC ${DEP_INSTALL_DIR}/include)
+
+# Link dependencies
+target_link_libraries(dachshund_direct_engine PUBLIC -L${DEP_INSTALL_DIR}/lib)
+
 # Link the library against the other libraries
 target_link_libraries(dachshund_direct_engine PUBLIC dachshund_render_engine)
 

@@ -191,7 +191,7 @@ namespace SDL
             if(!m_fonts_container.contains(font_tag))
                 m_fonts_container.insert({font_tag, font});
             else
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to add font with tag that already contains in the render scene");
+                spdlog::warn("Attempted to add font with tag that already contains in the render scene");
         }
 
         /*!
@@ -202,7 +202,7 @@ namespace SDL
         [[maybe_unused]] inline void remove_supported_font(const std::string& font_tag)
         {
             if(!m_fonts_container.contains(font_tag))
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to remove font with tag that do not contains in the render scene");
+                spdlog::warn("Attempted to remove font with tag that do not contains in the render scene");
             else
                 m_fonts_container.erase(font_tag);
         }
@@ -223,8 +223,8 @@ namespace SDL
 
             // Check if the font loaded correctly
             if(font._data == nullptr) {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Unable to load font %s", std::string(font.path).c_str());
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- %s", TTF_GetError());
+                spdlog::error("Unable to load font {}", std::string(font.path).c_str());
+                spdlog::error("{}", TTF_GetError());
                 throw SDL::DirectTrueTypeSystemException();
             }
 
@@ -256,18 +256,18 @@ namespace SDL
         [[maybe_unused]] static void assert_font_container_invariants(SDL::DirectFontContainer& font)
         {
             if(font.path.empty()) {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to load the font with invalid font path");
+                spdlog::error("Attempted to load the font with invalid font path");
                 throw DirectInvalidArgument();
             }
 
             if(font.size <= 0) {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to load the font with invalid font size(should be >0)");
+                spdlog::error("Attempted to load the font with invalid font size");
                 throw DirectInvalidArgument();
             }
 
             if(font._data != nullptr) {
-                SDL_LogWarn (SDL_LOG_CATEGORY_APPLICATION, "\t--- Attempted to load the already initialized font");
-                SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Cleaning up the font data...");
+                spdlog::warn("Attempted to load the font that is already in the memory");
+                spdlog::warn("Cleaning up the previous font data...");
                 TTF_CloseFont(font._data);
             }
         }

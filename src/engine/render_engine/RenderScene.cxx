@@ -31,8 +31,6 @@ std::ptrdiff_t SDL::RenderScene::get_render_group_by_id(const SDL::RenderGroupID
 
 void SDL::RenderScene::push_to_render_group(const SDL::RenderGroupID render_group, SDL::RenderObject render_object)
 {
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::RenderScene::push_to_render_group [overloaded]");
-
 	// The index of the render group associated with the render_group ID
 	std::ptrdiff_t render_group_index{0};
 
@@ -49,7 +47,7 @@ void SDL::RenderScene::push_to_render_group(const SDL::RenderGroupID render_grou
 		m_render_groups                 .emplace_back();
 
 		render_group_index = static_cast<std::ptrdiff_t>(m_render_group_id_to_internal_id.size() - 1);
-		SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- The new render group container has been created");
+        spdlog::debug("The new render group container has been created");
 	}
 
 	// Move the element to the render group
@@ -58,18 +56,16 @@ void SDL::RenderScene::push_to_render_group(const SDL::RenderGroupID render_grou
 
 void SDL::RenderScene::alias_render_group(const SDL::RenderGroupID render_group_id, const SDL::RenderGroupName& aliased_name)
 {
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Entering SDL::RenderScene::alias_render_group [%p]", this);
-
 	// If the render group with the same name is already exists
 	if (m_render_group_names.contains(aliased_name))
 	{
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- The name %s is already aliased", aliased_name.c_str());
+        spdlog::warn("The name {} is already aliased to the existing render group", aliased_name.c_str());
 
 		// Throw the invalid_argument exception as the specified name already exists in the table
 		throw SDL::DirectInvalidArgument();
 	}
 
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- The name %s was aliased to the ID of %d", aliased_name.c_str(), render_group_id);
+    spdlog::debug("he name {} was aliased to the ID of {}", aliased_name.c_str(), render_group_id);
 
 	// Otherwise do the alias
 	m_render_group_names[aliased_name] = render_group_id;
@@ -86,7 +82,7 @@ void SDL::RenderScene::push_text_to_render_group(
     // If the font is already aliased with some data, we throw
     // the exception(due to the remove_supported_font() interface)
     if(!m_fonts_container.contains(font_name)) {
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Font %s does not supported", font_name.c_str());
+        spdlog::debug("Font {} does not supported in the render group {}", font_name.c_str(), render_group);
         throw SDL::DirectInvalidArgument();
     }
 
@@ -106,7 +102,7 @@ void SDL::RenderScene::push_text_to_render_group(
         m_render_groups                 .emplace_back();
 
         render_group_index = static_cast<std::ptrdiff_t>(m_render_group_id_to_internal_id.size() - 1);
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- The new render group container has been created");
+        spdlog::debug("The new render group container has been created");
     }
 
     // Find out how many pixels the provided(by font_name) is occupied by the font
@@ -174,7 +170,7 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
                     // the project is under development and this variant can change frequently or because
                     // the user passed the wrong type to the variant. In all cases the abort exception
                     // should now be thrown as it is not an critical issue
-                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Non-exhaustive visitor in [SDL::RenderingManager::enable_render_group]");
+                    spdlog::warn("Non-exhaustive visitor in SDL::RenderingManager::enable_render_group");
                 }
             }, render_object);
         }
@@ -182,7 +178,7 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
         {
             // The render_object is somehow valueless_by_exception, we are
             // just logging the error and then to the rest of the job
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "The render_object is valueless_by_exception!");
+            spdlog::warn("Caught valueless_by_exception render_object");
         }
 	}
 }
@@ -193,7 +189,7 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
     // does not create it and asign to the current id.
     if (!m_render_group_names.contains(render_group))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- The name %s is not aliased within any known render group", render_group.c_str());
+        spdlog::critical("The name {} is not aliased within any known render group", render_group.c_str());
         throw SDL::DirectInvalidArgument();
     }
 
@@ -225,7 +221,7 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
         {
             // The render_object is somehow valueless_by_exception, we are
             // just logging the error and then to the rest of the job
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "The render_object is valueless_by_exception!");
+            spdlog::error("Caught valueless_by_exception render object in SDL::RenderScene::disable_render_group");
         }
     }
 }
@@ -236,7 +232,7 @@ SDL::RenderGroupID SDL::RenderScene::get_distinct_render_group_id()
     // does not create it and assign to the current id.
     if (!m_render_group_names.contains(render_group))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- The name %s is not aliased within any known render group", render_group.c_str());
+        spdlog::warn("The name {} is not aliased within any known render group", render_group.c_str());
         throw SDL::DirectInvalidArgument();
     }
 

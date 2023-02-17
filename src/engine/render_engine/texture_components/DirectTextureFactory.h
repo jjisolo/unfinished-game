@@ -57,17 +57,17 @@ namespace SDL
                 const std::string_view    &image_airbag)
         {
             if(renderer_handle == nullptr) {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Cannot create direct texture: the renderer is nullptr");
+                spdlog::error("Cannot create direct texture: the renderer is nullptr");
                 throw SDL::DirectInvalidArgument();
             }
 
             if(image_path.empty()) {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Cannot create direct texture: image_path is invalid");
+                spdlog::error("Cannot create direct texture: image_path is invalid");
                 throw SDL::DirectInvalidArgument();
             }
 
             if(image_airbag.empty()) {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Cannot create direct texture: image_airbag is invalid");
+                spdlog::error("Cannot create direct texture: image_airbag is invalid");
                 throw SDL::DirectInvalidArgument();
             }
 
@@ -80,17 +80,17 @@ namespace SDL
 
                 image_surface = IMG_Load(texture_path);
                 if(image_surface == nullptr) {
-                    SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t\t--- %s", IMG_GetError());
+                    spdlog::error("{}", IMG_GetError());
                     throw SDL::DirectSystemException();
                 }
 
                 image_texture = SDL_CreateTextureFromSurface(renderer_handle, image_surface);
                 if(image_texture == nullptr) {
-                    SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "\t\t--- %s", IMG_GetError());
+                    spdlog::error("{}", IMG_GetError());
                     throw SDL::DirectSystemException();
                 }
 
-                SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t\t--- Loaded texture %s", texture_path);
+                spdlog::debug("Loaded texture {}", texture_path);
                 SDL_FreeSurface(image_surface);
 
                 return image_texture;
@@ -144,14 +144,14 @@ namespace SDL
             }
 
             if(text_surface == nullptr) {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s", TTF_GetError());
+                spdlog::error("{}", TTF_GetError());
                 throw SDL::DirectTrueTypeSystemException();
             }
 
             text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
 
             if(text_texture == nullptr) {
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s", SDL_GetError());
+                spdlog::error("{}", SDL_GetError());
                 throw SDL::DirectSystemException();
             }
 

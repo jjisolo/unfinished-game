@@ -23,6 +23,12 @@ target_include_directories(dachshund_render_engine
 	${CMAKE_CURRENT_SOURCE_DIR}/engine_interfaces
 )
 
+# Setup dependency include directories
+target_include_directories(dachshund_render_engine PUBLIC ${DEP_INSTALL_DIR}/include)
+
+# Link dependencies
+target_link_libraries(dachshund_render_engine PUBLIC -L${DEP_INSTALL_DIR}/lib)
+
 # Link the library against the other libraries
 if(UNIX)
 	target_include_directories(dachshund_render_engine PUBLIC include ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})

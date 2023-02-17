@@ -13,7 +13,9 @@
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
 {
-    spdlog::info("Welcome to spdlog version {}.{}.{}  !", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
+    spdlog::set_level(spdlog::level::trace);
+
+    spdlog::info("Welcome to spdlog version {}.{}.{}!", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
 
     std::shared_ptr<SDL::RenderingManager>      render_manager  (new SDL::RenderingManager());
     std::shared_ptr<SDL::EngineInterface>       game_engine     (new SDL::EngineInterface(render_manager));

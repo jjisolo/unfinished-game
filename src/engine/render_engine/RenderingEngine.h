@@ -4,6 +4,8 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 
+#include <spdlog/spdlog.h>
+
 #include <RenderingExceptions.h>
 
 #include <unordered_map>

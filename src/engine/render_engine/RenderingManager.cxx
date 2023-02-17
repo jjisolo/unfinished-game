@@ -5,7 +5,7 @@
     // If we are rewriting the render scene, it means we throw the exception
     // because we can't disable it(due to the class structure).
     if(m_render_scene_container.contains(render_scene_tag))
-        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "\t--- Binding of the existing render scene: %s", render_scene_tag.c_str());
+        spdlog::warn("Binding of the existing render scene: {}", render_scene_tag.c_str());
 
     m_render_scene_container.emplace(render_scene_tag, std::move(render_scene));
 }
@@ -16,7 +16,7 @@
     // because we can't disable it(due to the class structure).
     if(!m_render_scene_container.contains(render_scene_tag))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- The render scene width a tag %s does not contained in the map", render_scene_tag.c_str());
+        spdlog::error("The render scene width a tag {} does not contained in the map", render_scene_tag.c_str());
         throw SDL::DirectInvalidArgument();
     }
 
@@ -51,14 +51,14 @@ void SDL::RenderingManager::render()
                             // the project is under development and this variant can change frequently or because
                             // the user passed the wrong type to the variant. In all cases the abort exception
                             // should now be thrown as it is not an critical issue
-                            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Non-exhaustive visitor in [SDL::RenderingManager::render]");
+                            spdlog::error("Non-exhaustive visitor in SDL::RenderingManager::render");
                         }
                     }, enabled_render_object);
                 }
                 catch(const std::bad_variant_access& exception)
                 {
                     // The render_object is somehow valueless_by_exception, we are just logging the error and then to the rest of the job
-                    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- The render_object is valueless_by_exception!");
+                    spdlog::error("The render_object is valueless_by_exception");
                 }
             }
         }
@@ -67,7 +67,7 @@ void SDL::RenderingManager::render()
     }
     catch(const std::out_of_range& exception)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\t--- Can't get access to the render scene with Tag %s", m_active_render_scene.c_str());
+        spdlog::error("Can't get access to the render scene with Tag {}", m_active_render_scene.c_str());
         return;
     }
 }

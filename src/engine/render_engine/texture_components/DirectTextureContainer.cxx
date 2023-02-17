@@ -15,7 +15,7 @@ static constexpr const std::string_view default_texture_airbag("data/assets/unde
 
     // Validate the user-given renderer handle
     if(renderer_handle == nullptr) {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "\t--- The provided renderer is NULL, unable to render the textures");
+        spdlog::critical("Unable to render the texture because provided renderere is invalid");
         throw SDL::DirectInvalidArgument();
     }
 
@@ -40,14 +40,14 @@ static constexpr const std::string_view default_texture_airbag("data/assets/unde
 {
     // Validate the user-given renderer handle
     if(renderer_handle == nullptr) {
-        SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "\t--- The provided renderer is NULL, unable to enable the textures");
+        spdlog::error("Unable to render the textures due to the invalid renderer");
         throw SDL::DirectInvalidArgument();
     }
 
     // If the object is already enabled, we should either disable and then enable it,
     // or do nothing
     if(m_direct_object_state == SDL::DirectObjectState::Enabled) {
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- The texture %s is already enabled", m_direct_object_name.c_str());
+        spdlog::warn("Attempted to reinitialize texture that is already initialized ({})", m_direct_object_name.c_str());
         return;
     }
 
@@ -80,12 +80,12 @@ static constexpr const std::string_view default_texture_airbag("data/assets/unde
 [[maybe_unused]] void SDL::DirectTextureContainer::disable()
 {
     if(m_direct_object_state == SDL::DirectObjectState::Disabled) {
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Texture %s is already disabled", m_direct_object_name.c_str());
+        spdlog::warn("Attempted to disable already disabled texture ({})", m_direct_object_name.c_str());
         return;
     }
 
     // Destroy the texture internal data
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "\t--- Unloading texture %s", m_direct_object_name.c_str());
+    spdlog::debug("Purging texture {}", m_direct_object_name.c_str());
     SDL_DestroyTexture(m_shared_texture.get());
 
     // Disable the texture(do not render it)

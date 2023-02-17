@@ -5,6 +5,8 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 
+#include <spdlog/spdlog.h>
+
 #include <cstdio>
 #include <string>
 #include <utility>
