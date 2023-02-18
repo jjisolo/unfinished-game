@@ -3,6 +3,7 @@ add_library(dachshund_direct_engine STATIC
 	"src/StartupManager.cxx"
 	"src/EngineInterface.cxx"
 	"src/KeyboardState.cxx"
+	"src/MouseState.cxx"
 )
 
 # Create alias for the library for better looking
@@ -11,7 +12,7 @@ add_library(SDL2::Engine ALIAS dachshund_direct_engine)
 # Set target include directories
 target_include_directories(dachshund_direct_engine
 	PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
+	include
 )
 
 # Setup dependency include directories
@@ -32,3 +33,9 @@ else()
 	target_link_libraries(dachshund_direct_engine SDL2_mixer::SDL2_mixer)
 	target_link_libraries(dachshund_direct_engine SDL2_ttf::SDL2_ttf)
 endif(UNIX)
+
+# Link Google test library
+target_link_libraries(dachshund_direct_engine PUBLIC gtest)
+
+# Add testing subdirectory
+add_subdirectory(test)
