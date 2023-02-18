@@ -16,7 +16,8 @@
 #include "KeyboardState.h"
 #include "EngineRegistry.h"
 #include "StartupManager.h"
-#include <RenderingManager.h>
+
+#include <Rendering/RenderingManager.h>
 
 /*!
  * This is a global namespace for all public objects
@@ -33,7 +34,7 @@ namespace SDL
 
     /*!
     * This is internal namespace for the game engine, you should not use
-    * any of the datastructres, modify any data that is under that namespace
+    * any of the data structres, modify any data that is under that namespace
     */
     namespace priv
     {
@@ -149,17 +150,12 @@ namespace SDL
             */
             void builtin_on_user_update();
 
-            //void builtin_mousemove_callback();
-            //void builtin_windowresize_callback();
-
-
         private:
             SDL::SmartWindowHandle   m_window_handle;
             SDL::SmartRendererHandle m_renderer_handle;
             SDL::BinaryState16		 m_application_should_close{};
 
             SDL::priv::EngineRegistry         m_registry;
-            SDL::priv::WindowStartupDetails   m_window_startup_details;
 
             std::shared_ptr<SDL::priv::MouseState>     m_mouse_state;
             std::shared_ptr<SDL::priv::KeyboardState>  m_keyboard_state;

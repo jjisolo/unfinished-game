@@ -1,4 +1,4 @@
-#include "../include/backend/EngineInterface.h"
+#include <Backend/EngineInterface.h>
 
 static constexpr const uint32_t mixer_init_flags  = MIX_INIT_MP3;
 static constexpr const uint32_t image_init_flags  = IMG_INIT_PNG   | IMG_INIT_JPG;
@@ -6,7 +6,7 @@ static constexpr const uint32_t direct_init_flags = SDL_INIT_VIDEO | SDL_INIT_AU
 
 static constexpr const char* default_window_title = "Dachshund adventures!";
 
-SDL_Renderer* SDL::EngineInterface::get_renderer_handle()
+[[maybe_unused]] SDL_Renderer* SDL::EngineInterface::get_renderer_handle()
 {
 	return m_renderer_handle.get();
 }
@@ -65,54 +65,58 @@ void SDL::EngineInterface::builtin_on_user_create()
     spdlog::info("Initializing basic SDL2 structures.");
     spdlog::info("Loading the window properties data.");
 
-	if (!m_window_startup_details.load())
-	{
-        spdlog::debug("As the read operation failed, the default launch info is going to be used");
+    // Load the window startup properties(if they exist)
+    auto window_startup_details = SDL::priv::StartupManager::load();
 
-		m_window_handle.reset(SDL_CreateWindow(
-			SDL::priv::default_window_title,
-			SDL::priv::default_window_position.first,
-			SDL::priv::default_window_position.second,
-			SDL::priv::default_window_dimensions.first,
-			SDL::priv::default_window_dimensions.second,
-			SDL::priv::default_window_flags
-		));
+    try
+    {
+        m_window_handle.reset(SDL_CreateWindow(
+                SDL::priv::default_window_title,
+                window_startup_details.value().m_last_known_position.first,
+                window_startup_details.value().m_last_known_position.second,
+                window_startup_details.value().m_last_known_dimensions.first,
+                window_startup_details.value().m_last_known_dimensions.second,
+                window_startup_details.value().m_last_known_window_flags
+        ));
 
-		m_renderer_handle.reset(SDL_CreateRenderer(
-			m_window_handle.get(),
-			SDL::priv::default_rendering_device,
-			SDL::priv::default_renderer_flags
-		));
+        m_renderer_handle.reset(SDL_CreateRenderer(
+                m_window_handle.get(),
+                static_cast<int>(window_startup_details.value().m_last_known_rendering_device),
+                                 window_startup_details.value().m_last_known_renderer_flags
+        ));
 
-		m_registry.m_current_window_dimensions = std::make_pair(
-			SDL::priv::default_window_position.first,
-			SDL::priv::default_window_position.second
-		);
-	}
-	else
-	{
-        spdlog::debug("Read operation succeeded, using the previously saved launch info");
+        m_registry.m_current_window_dimensions = std::make_pair(
+                window_startup_details.value().m_last_known_dimensions.first,
+                window_startup_details.value().m_last_known_dimensions.second
+        );
 
-		m_window_handle.reset(SDL_CreateWindow(
-			SDL::priv::default_window_title,
-			m_window_startup_details.m_datum.m_last_known_position.first,
-			m_window_startup_details.m_datum.m_last_known_position.second,
-			m_window_startup_details.m_datum.m_last_known_dimensions.first,
-			m_window_startup_details.m_datum.m_last_known_dimensions.second,
-			m_window_startup_details.m_datum.m_last_known_window_flags
-		));
+        spdlog::debug("Using the previously saved window properties data");
+    }
+    catch(const std::bad_optional_access& exception)
+    {
+        m_window_handle.reset(SDL_CreateWindow(
+                SDL::priv::default_window_title,
+                SDL::priv::default_window_position.first,
+                SDL::priv::default_window_position.second,
+                SDL::priv::default_window_dimensions.first,
+                SDL::priv::default_window_dimensions.second,
+                SDL::priv::default_window_flags
+        ));
 
-		m_renderer_handle.reset(SDL_CreateRenderer(
-			                 m_window_handle.get(),
-			static_cast<int>(m_window_startup_details.m_datum.m_last_known_rendering_device),
-			                 m_window_startup_details.m_datum.m_last_known_renderer_flags
-		));
+        m_renderer_handle.reset(SDL_CreateRenderer(
+                m_window_handle.get(),
+                SDL::priv::default_rendering_device,
+                SDL::priv::default_renderer_flags
+        ));
 
-		m_registry.m_current_window_dimensions = std::make_pair(
-			m_window_startup_details.m_datum.m_last_known_dimensions.first, 
-			m_window_startup_details.m_datum.m_last_known_dimensions.second
-		);
-	}
+        m_registry.m_current_window_dimensions = std::make_pair(
+                SDL::priv::default_window_position.first,
+                SDL::priv::default_window_position.second
+        );
+
+        spdlog::debug("Using the default window properties data");
+    }
+
 
 	if (m_window_handle.get()   == nullptr)
 	{
@@ -171,24 +175,25 @@ void SDL::EngineInterface::stop()
     if(SDL_WasInit(SDL_INIT_VIDEO))
     {
         spdlog::info("Saving the window properties data");
+        SDL::priv::WindowStartupDetails window_startup_details;
 
         SDL_GetWindowPosition(
                 m_window_handle.get(),
-                &m_window_startup_details.m_datum.m_last_known_position.first,
-                &m_window_startup_details.m_datum.m_last_known_position.second
+                &window_startup_details.m_last_known_position.first,
+                &window_startup_details.m_last_known_position.second
         );
 
         SDL_GetWindowSize(
                 m_window_handle.get(),
-                &m_window_startup_details.m_datum.m_last_known_dimensions.first,
-                &m_window_startup_details.m_datum.m_last_known_dimensions.second
+                &window_startup_details.m_last_known_dimensions.first,
+                &window_startup_details.m_last_known_dimensions.second
         );
 
         // TODO: rendering device and rendering flags change implementation
-        m_window_startup_details.m_datum.m_last_known_rendering_device = SDL::priv::default_rendering_device;
-        m_window_startup_details.m_datum.m_last_known_renderer_flags   = SDL::priv::default_renderer_flags;
-        m_window_startup_details.m_datum.m_last_known_window_flags     = SDL::priv::default_window_flags;
-        m_window_startup_details.save();
+        window_startup_details.m_last_known_rendering_device  = SDL::priv::default_rendering_device;
+        window_startup_details.m_last_known_renderer_flags   = SDL::priv::default_renderer_flags;
+        window_startup_details.m_last_known_window_flags     = SDL::priv::default_window_flags;
+        SDL::priv::StartupManager::save(window_startup_details);
 
         spdlog::info("Deinitializing the SDL2 subsystems");
 

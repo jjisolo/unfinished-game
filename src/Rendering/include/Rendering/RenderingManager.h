@@ -1,8 +1,8 @@
 #pragma once
 
-#include <RenderingExceptions.h>
-#include <RenderingEngine.h>
-#include <RenderScene.h>
+#include <Rendering/RenderingExceptions.h>
+#include <Rendering/RenderingEngine.h>
+#include <Rendering/RenderScene.h>
 
 namespace SDL
 {

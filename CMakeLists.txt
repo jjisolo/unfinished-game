@@ -10,15 +10,23 @@ include(cmake/StandardProjectSettings.cmake)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Enable the testing features
+enable_testing()
+
+# Fix ld error(...recompile with -fPIE...)
+option(BUILD_SHARED_LIBS "Build libraries as shared as opposed to static" ON)
+add_compile_options(-fPIE)
+add_compile_options(-fPIC)
+
 # Setup google test environment
-#include(FetchContent)
-#FetchContent_Declare(
-#        googletest
-#        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-#)
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
 # For Windows: Prevent overriding the parent project's compiler/linker settings
-#set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-#FetchContent_MakeAvailable(googletest)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
   option(ENABLE_BUILD_WITH_TIME_TRACE "Enable -ftime-trace to generate time tracing .json files on clang" OFF)
@@ -78,7 +86,10 @@ else()
 endif(UNIX)
 
 # Set output executable path to the proper folder
-set(EXECUTABLE_OUTPUT_PATH "bin")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 
 # Add nested directories
 add_subdirectory(src)
@@ -86,11 +97,10 @@ add_subdirectory(src)
 # Make the progran properly run in the visual studio
 set_target_properties(
     dachshund PROPERTIES
-    VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
+    VS_DEBUGGER_WORKING_DIRECTORY "bin"
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET dachshund PROPERTY CXX_STANDARD 20)
 endif()
 
-# TODO: Add tests and install targets if needed.

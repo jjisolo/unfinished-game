@@ -1,8 +1,8 @@
 #pragma once
 
-#include <DirectObjectContainerPreset.h>
-#include "DirectTextureFactory.h"
-#include "RenderingEngine.h"
+#include <Rendering/DirectObjectContainerPreset.h>
+#include <Rendering/DirectTextureFactory.h>
+#include <Rendering/RenderingEngine.h>
 
 #include <utility>
 

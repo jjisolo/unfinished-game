@@ -1,16 +1,9 @@
 # Create the library
 add_library(dachshund_render_engine STATIC 
-	"RenderingManager.h"	
-	"RenderingManager.cxx"
-	"RenderingEngine.h"
-	"texture_components/DirectTextureFactory.h"
-	"texture_components/DirectTextureContainer.h"
-	"texture_components/DirectTextureContainer.cxx"
-	"RenderScene.h"
-	"RenderScene.cxx"
-    "RenderingExceptions.h"
-        "engine_interfaces/DirectObjectContainerPreset.cxx"
-	"engine_interfaces/DirectObjectContainerPreset.h")
+	"src/RenderingManager.cxx"
+	"src/DirectTextureContainer.cxx"
+	"src/RenderScene.cxx"
+		)
 
 # Create alias for the library for better looking
 add_library(SDL2::RenderEngine ALIAS dachshund_render_engine)
@@ -21,6 +14,12 @@ target_include_directories(dachshund_render_engine
 		.
 		texture_components
 		engine_interfaces
+)
+
+# Set target include directories
+target_include_directories(dachshund_direct_engine
+		PUBLIC
+		include
 )
 
 # Setup dependency include directories

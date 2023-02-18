@@ -1,5 +1,5 @@
-#include "DirectTextureContainer.h"
-#include "DirectTextureFactory.h"
+#include <Rendering/DirectTextureContainer.h>
+#include <Rendering/DirectTextureFactory.h>
 
 static constexpr const std::string_view default_texture_airbag("data/assets/undefined.png");
 

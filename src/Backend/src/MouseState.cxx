@@ -1,4 +1,4 @@
-#include "../include/backend/MouseState.h"
+#include <Backend/MouseState.h>
 
 [[maybe_unused]] void SDL::priv::MouseState::update(SDL_Event& event) {
     // Poll for currently pending events.

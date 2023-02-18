@@ -1,15 +1,22 @@
-﻿#include <SDL.h>
+﻿// SDL2 library headers
+#include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 
-#include <DirectTextureContainer.h>
-#include <DirectTextureFactory.h>
-#include <RenderingManager.h>
-#include <EngineInterface.h>
-#include <RenderScene.h>
+// Vendor libraries headers
+#include <spdlog/spdlog.h>
 
-#include "spdlog/spdlog.h"
+// Engine backend headers
+#include <Backend/EngineInterface.h>
+
+// Engine rendering headers
+#include <Rendering/DirectTextureContainer.h>
+#include <Rendering/DirectTextureFactory.h>
+#include <Rendering/RenderingManager.h>
+#include <Rendering/RenderScene.h>
+
+// Engine interface headers
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
 {

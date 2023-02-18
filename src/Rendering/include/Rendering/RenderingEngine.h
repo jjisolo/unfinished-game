@@ -6,7 +6,7 @@
 
 #include <spdlog/spdlog.h>
 
-#include <RenderingExceptions.h>
+#include <Rendering/RenderingExceptions.h>
 
 #include <unordered_map>
 #include <type_traits>

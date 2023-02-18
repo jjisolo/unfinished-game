@@ -1,7 +1,7 @@
 #pragma once
 
-#include <RenderingEngine.h>
-#include <DirectTextureContainer.h>
+#include <Rendering/RenderingEngine.h>
+#include <Rendering/DirectTextureContainer.h>
 
 #include <utility>
 

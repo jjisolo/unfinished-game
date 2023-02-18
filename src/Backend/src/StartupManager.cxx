@@ -1,7 +1,6 @@
-#include "../include/backend/StartupManager.h"
+#include <Backend/StartupManager.h>
 
-
-bool SDL::priv::WindowStartupDetails::save()
+bool SDL::priv::StartupManager::save(SDL::priv::WindowStartupDetails& details)
 {
     spdlog::debug(" Opening file {} for writing", SDL::priv::launch_details_filename);
 	SDL_RWops* startup_details = SDL_RWFromFile(SDL::priv::launch_details_filename, "w");
@@ -13,7 +12,7 @@ bool SDL::priv::WindowStartupDetails::save()
 		return false;
 	}
 	
-	if (SDL_RWwrite(startup_details, &m_datum, sizeof(m_datum), 1) < 1)
+	if (SDL_RWwrite(startup_details, &details, sizeof(details), 1) < 1)
 	{
         spdlog::error("The write operation has failed");
         spdlog::error("{}", SDL_GetError());
@@ -30,29 +29,31 @@ bool SDL::priv::WindowStartupDetails::save()
 	return true;
 }
 
-bool SDL::priv::WindowStartupDetails::load()
+std::optional<SDL::priv::WindowStartupDetails> SDL::priv::StartupManager::load()
 {
     spdlog::debug("Opening file {} for writing", SDL::priv::launch_details_filename);
-	SDL_RWops* startup_details = SDL_RWFromFile(SDL::priv::launch_details_filename, "r");
+    SDL_RWops* startup_details = SDL_RWFromFile(SDL::priv::launch_details_filename, "r");
+
+    SDL::priv::WindowStartupDetails details;
 
 	if (startup_details != NULL)
 	{
-		if (SDL_RWread(startup_details, &m_datum, sizeof(m_datum), 1) == 0)
+		if (SDL_RWread(startup_details, &details, sizeof(details), 1) == 0)
 		{
             spdlog::error("The read operation has failed");
             spdlog::error("{}", SDL_GetError());
-			return false;
+			return std::nullopt;
 		}
 
 		if (SDL_RWclose(startup_details) != 0)
 		{
             spdlog::error("The close operation has failed");
             spdlog::error("{}", SDL_GetError());
-			return false;
+            return details;
 		}
 
-		return true;
+		return details;
 	}
 
-	return false;
+	return std::nullopt;
 }

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <RenderingEngine.h>
-#include <RenderingExceptions.h>
-#include <DirectTextureContainer.h>
+#include <Rendering/RenderingEngine.h>
+#include <Rendering/RenderingExceptions.h>
+#include <Rendering/DirectTextureContainer.h>
 
 namespace SDL
 {

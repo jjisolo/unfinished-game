@@ -1,10 +1,12 @@
 # Add nested folders
-add_subdirectory(engine)
+add_subdirectory(Backend)
+add_subdirectory(Interface)
+add_subdirectory(Rendering)
 
 # Add source to this project's executable.
 add_executable (dachshund 
 	"EntryPoint.cxx"
-		engine/MouseState.cxx)
+)
 
 # We use the library for each subfolder
 target_link_libraries(dachshund

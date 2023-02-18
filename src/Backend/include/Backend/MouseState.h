@@ -4,7 +4,7 @@
 #include <array>
 #include <utility>
 
-#include <RenderingExceptions.h>
+#include <Rendering/RenderingExceptions.h>
 
 namespace SDL::priv
 {

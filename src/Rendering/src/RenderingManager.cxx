@@ -1,4 +1,4 @@
-#include "RenderingManager.h"
+#include <Rendering/RenderingManager.h>
 
 [[maybe_unused]] void SDL::RenderingManager::bind_render_scene(const SDL::RenderSceneTag& render_scene_tag, SDL::RenderScene render_scene)
 {

@@ -1,5 +1,5 @@
-#include <DirectTextureFactory.h>
-#include <RenderScene.h>
+#include <Rendering/DirectTextureFactory.h>
+#include <Rendering/RenderScene.h>
 
 std::ptrdiff_t SDL::RenderScene::get_render_group_by_id(const SDL::RenderGroupID render_group)
 {
