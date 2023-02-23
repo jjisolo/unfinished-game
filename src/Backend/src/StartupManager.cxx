@@ -2,7 +2,6 @@
 
 bool SDL::priv::StartupManager::save(SDL::priv::WindowStartupDetails& details)
 {
-    spdlog::debug(" Opening file {} for writing", SDL::priv::launch_details_filename);
 	SDL_RWops* startup_details = SDL_RWFromFile(SDL::priv::launch_details_filename, "w");
 
 	if (startup_details == NULL)
@@ -31,7 +30,6 @@ bool SDL::priv::StartupManager::save(SDL::priv::WindowStartupDetails& details)
 
 std::optional<SDL::priv::WindowStartupDetails> SDL::priv::StartupManager::load()
 {
-    spdlog::debug("Opening file {} for writing", SDL::priv::launch_details_filename);
     SDL_RWops* startup_details = SDL_RWFromFile(SDL::priv::launch_details_filename, "r");
 
     SDL::priv::WindowStartupDetails details;

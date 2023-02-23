@@ -31,6 +31,9 @@ void SDL::RenderingManager::render()
         auto& active_render_scene        = m_render_scene_container.at(m_active_render_scene);
         auto  enabled_render_groups_list = active_render_scene.get_enabled_render_groups();
 
+	// Clear the screen before any of rendering happens
+	SDL_RenderClear(active_render_scene.m_binded_renderer_handle);
+
         // Iterate through each enabled render group
         for(auto& enabled_render_group_id: enabled_render_groups_list)
         {

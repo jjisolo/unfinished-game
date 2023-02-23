@@ -225,7 +225,6 @@ namespace SDL
             if(font._data == nullptr) {
                 spdlog::error("Unable to load font {}", std::string(font.path).c_str());
                 spdlog::error("{}", TTF_GetError());
-                throw SDL::DirectTrueTypeSystemException();
             }
 
             int font_style{TTF_STYLE_NORMAL};
@@ -241,9 +240,13 @@ namespace SDL
                 case SDL::DirectFontDisplayVariant::StrikeThroughItalic: font_style = TTF_STYLE_STRIKETHROUGH|TTF_STYLE_ITALIC; break;
                 default: font_style = TTF_STYLE_NORMAL; break;
             }
-
-            TTF_SetFontStyle  (font._data, font_style);
-            TTF_SetFontHinting(font._data, TTF_HINTING_LIGHT_SUBPIXEL);
+           
+            // We are passing invalid structure to the rendering pipeline, to then
+            // call the airbag load from it.
+            if(font._data) {
+               TTF_SetFontStyle  (font._data, font_style);
+               TTF_SetFontHinting(font._data, TTF_HINTING_LIGHT_SUBPIXEL);
+            }
         }
 
         /*!

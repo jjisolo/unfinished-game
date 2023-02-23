@@ -90,7 +90,7 @@ void SDL::EngineInterface::builtin_on_user_create()
                 window_startup_details.value().m_last_known_dimensions.second
         );
 
-        spdlog::debug("Using the previously saved window properties data");
+        spdlog::info("Using the previously saved window properties data");
     }
     catch(const std::bad_optional_access& exception)
     {

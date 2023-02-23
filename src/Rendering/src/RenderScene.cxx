@@ -109,12 +109,22 @@ void SDL::RenderScene::push_text_to_render_group(
     SDL::SharedTexturePosition font_size_pixels;
 
     // Calculate the dimensions of a rendered string of Latin1 text.
-    TTF_SizeText(
+    //
+    // If the font container holding texture airbag(the font._data is nullptr)
+    // means that there no font data contains in the container, because, it 
+    // can't or failed to be loaded
+    if(m_fonts_container.at(font_name)._data != nullptr) {
+        TTF_SizeText(
             m_fonts_container.at(font_name)._data,
             std::string(text).c_str(),
             reinterpret_cast<int *>(&font_size_pixels.first),
             reinterpret_cast<int *>(&font_size_pixels.second)
-    );
+        );
+    } else {
+        // Assuming default font size of 24 pixels
+        font_size_pixels.first  = std::string(text).size() * 24;
+        font_size_pixels.second = 24;
+    }
 
     // Construct the destination rectangle using the values ahead
     SDL::SharedTextureRect texture_destination{
