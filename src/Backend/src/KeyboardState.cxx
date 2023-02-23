@@ -2,9 +2,6 @@
 
 [[maybe_unused]] void SDL::priv::KeyboardState::update(SDL_Event& event)
 {
-    // Poll for currently pending events
-    SDL_PollEvent(&event);
-
     // Value to assign to the button, depends on whether the key is down
     // or it is released
     auto assign_value{false};

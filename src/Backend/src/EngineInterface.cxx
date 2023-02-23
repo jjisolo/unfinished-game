@@ -120,17 +120,17 @@ void SDL::EngineInterface::builtin_on_user_create()
 
 	if (m_window_handle.get()   == nullptr)
 	{
-        spdlog::critical("SDL_Window structure initialization failed!");
-        spdlog::critical("{}", SDL_GetError());
+        	spdlog::critical("SDL_Window structure initialization failed!");
+        	spdlog::critical("{}", SDL_GetError());
 	}
 	
 	if (m_renderer_handle.get() == nullptr)
 	{
-        spdlog::critical("SDL_Renderer structure initialization failed!");
-        spdlog::critical("{}", SDL_GetError());
+        	spdlog::critical("SDL_Renderer structure initialization failed!");
+        	spdlog::critical("{}", SDL_GetError());
 	}
 
-    spdlog::info("SDL2 structures initialized succesfully");
+    	spdlog::info("SDL2 structures initialized succesfully");
 	m_application_should_close = false;
 }
 
@@ -141,6 +141,7 @@ void SDL::EngineInterface::builtin_on_user_update()
 
     // Pump the event loop, gathering events from the input devices
     SDL_PumpEvents();
+    SDL_PollEvent(&processed_event);  
 
     // Update the state of the mouse and keyboard
     m_keyboard_state -> update(processed_event);
@@ -151,7 +152,7 @@ void SDL::EngineInterface::builtin_on_user_update()
 	{
 		switch (processed_event.type)
 		{
-            // SDL_QUIT: User hit the quit button on the application window
+       		        // SDL_QUIT: User hit the quit button on the application window
 			case SDL_QUIT:
 				m_application_should_close = true;
 				break;
@@ -163,7 +164,7 @@ void SDL::EngineInterface::start()
 {
 	while (m_application_should_close != true)
 	{
-        m_binded_render_manager->render();
+	        m_binded_render_manager->render();
 
 		builtin_on_user_update();
 		on_user_update();

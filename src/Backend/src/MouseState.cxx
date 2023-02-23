@@ -1,9 +1,7 @@
 #include <Backend/MouseState.h>
 
 [[maybe_unused]] void SDL::priv::MouseState::update(SDL_Event& event) {
-    // Poll for currently pending events.
-    SDL_PollEvent(&event);
-
+    // Parse each of mouse event variant
     switch (event.type) {
         // Parse the mouse button press event
         case SDL_MOUSEBUTTONDOWN:
