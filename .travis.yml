@@ -1,8 +1,9 @@
 dist: trusty
-sudo: false
-
+sudo: true
 language: cpp
 
 script:
-  - cmake .
-  - cmake --build .
+  - mkdir build
+  - cd build
+  - cmake .. -G "Ninga"
+  - cmake --build . --target dachshund
